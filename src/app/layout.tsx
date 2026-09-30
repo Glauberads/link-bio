@@ -16,7 +16,8 @@ const oswald = Oswald({
 import { prisma } from "@/lib/prisma";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const config = await prisma.siteConfig.findFirst({ where: { id: 1 } });
+  let config = null;
+  try { config = await prisma.siteConfig.findFirst({ where: { id: 1 } }); } catch {}
   
   return {
     title: config?.seoTitle || "FFR Conecta | G-ADS",
@@ -43,7 +44,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const config = await prisma.siteConfig.findFirst({ where: { id: 1 } });
+  let config = null;
+  try { config = await prisma.siteConfig.findFirst({ where: { id: 1 } }); } catch {}
   
   return (
     <html lang="pt-BR" className={`${manrope.variable} ${oswald.variable} h-full antialiased dark`}>
