@@ -4,6 +4,8 @@ import { Search, Camera, MessageCircle, Laptop, Globe, Briefcase, Copy, Code, Fo
 import { prisma } from "@/lib/prisma";
 import { FloatingChat } from "@/components/FloatingChat";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const config = await prisma.siteConfig.findUnique({ where: { id: 1 } });
   const fixedLinks = (config?.fixedLinksConfig as any) || {};
