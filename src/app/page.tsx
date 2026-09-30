@@ -7,8 +7,15 @@ import { FloatingChat } from "@/components/FloatingChat";
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const config = await prisma.siteConfig.findUnique({ where: { id: 1 } });
-  const fixedLinks = (config?.fixedLinksConfig as any) || {};
+  let config = null;
+  let fixedLinks: any = {};
+  try {
+    config = await prisma.siteConfig.findUnique({ where: { id: 1 } });
+    fixedLinks = (config?.fixedLinksConfig as any) || {};
+  } catch (e) {
+    console.error('DB error:', e);
+  }
+
 
   return (
     <main className="min-h-screen bg-background relative overflow-hidden flex justify-center lg:justify-start max-w-7xl mx-auto">
