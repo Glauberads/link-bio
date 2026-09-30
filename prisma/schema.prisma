@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Lead {
+  id           String   @id @default(cuid())
+  nome         String
+  email        String
+  telefone     String?
+  empresa      String?
+  interesse    String?
+  mensagem     String?
+  origem       String?
+  utm_source   String?
+  utm_medium   String?
+  utm_campaign String?
+  utm_content  String?
+  status       String   @default("novo") // novo, contatado, proposta, ganho, perdido
+  createdAt    DateTime @default(now())
+}
+
+model WaitlistEntry {
+  id          String   @id @default(cuid())
+  projectSlug String
+  email       String
+  nome        String?
+  createdAt   DateTime @default(now())
+
+  @@unique([projectSlug, email])
+}
+
+model Resource {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  titulo            String
+  descricao         String
+  categoria         String
+  tags              String[]
+  url               String
+  destaque          Boolean  @default(false)
+  ativo             Boolean  @default(true)
+  linkStatus        String   @default("ok") // ok, broken
+  ultimaVerificacao DateTime @default(now())
+  createdAt         DateTime @default(now())
+}
+
+model Category {
+  id    String  @id @default(cuid())
+  nome  String
+  slug  String  @unique
+  ordem Int     @default(0)
+  emoji String?
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  nome      String
+  descricao String
+  status    String   // Disponivel, MVP, Em desenvolvimento, Em planejamento
+  tags      String[]
+  logoUrl   String?
+  ctaUrl    String?
+  ordem     Int      @default(0)
+}
+
+model SystemProduct {
+  id        String  @id @default(cuid())
+  slug      String  @unique
+  nicho     String
+  descricao String
+  imagemUrl String
+  videoUrl  String?
+  ordem     Int     @default(0)
+}
+
+model ClickEvent {
+  id           String   @id @default(cuid())
+  alvo         String
+  tipo         String   // botao, recurso, checkout, whatsapp
+  pagina       String
+  utm_source   String?
+  utm_medium   String?
+  utm_campaign String?
+  utm_content  String?
+  createdAt    DateTime @default(now())
+}
+
+model Order {
+  id         String   @id @default(cuid())
+  provider   String   @default("asaas")
+  externalId String   @unique
+  email      String
+  valor      Float
+  status     String   // pago, reembolsado, pendente
+  createdAt  DateTime @default(now())
+}
+
+model ConsentRecord {
+  id         String   @id @default(cuid())
+  sessionId  String
+  categorias String[]
+  createdAt  DateTime @default(now())
+}
+
+model DataRequest {
+  id        String   @id @default(cuid())
+  email     String
+  tipo      String   // acesso, correcao, exclusao
+  status    String   @default("pendente") // pendente, concluido
+  createdAt DateTime @default(now())
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String?
+  role         String   @default("admin")
+}
+
+model SiteConfig {
+  id              Int      @id @default(1)
+  logoUrl         String?
+  characterUrl    String?
+  siteTitle       String?
+  siteSubtitle    String?
+  siteDescription String?
+  tiktokUrl       String?
+  instagramUrl    String?
+  whatsappUrl     String?
+  orcamentoUrl    String?
+  siteOficialUrl  String?
+  sistemasUrl     String?
+  siteGenUrl      String?
+  githubUrl       String?
+  projetosUrl     String?
+  dicasUrl        String?
+  faviconUrl      String?
+  seoImageUrl     String?
+  seoTitle        String?
+  seoDescription  String?
+  youtubeUrl      String?
+  customLinks     Json?    @default("[]")
+  fixedLinksConfig Json?   @default("{}")
+  metaPixelId     String?
+  webhookUrl      String?
+  agentPrompt     String?
+  agentEnabled    Boolean  @default(false)
+  geminiApiKey    String?
+  geminiModel     String?  @default("gemini-2.0-flash-exp")
+  updatedAt       DateTime @updatedAt
+}
