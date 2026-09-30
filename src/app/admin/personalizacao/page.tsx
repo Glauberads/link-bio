@@ -10,7 +10,7 @@ export default function PersonalizacaoPage() {
   const [saving, setSaving] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [characterFile, setCharacterFile] = useState<File | null>(null);
-  const [customLinks, setCustomLinks] = useState<{id: number, title: string, url: string}[]>([]);
+  const [customLinks, setCustomLinks] = useState<{id: number, title: string, url: string, iconUrl?: string}[]>([]);
   const [editingFixedLink, setEditingFixedLink] = useState<string | null>(null);
 
   const DEFAULT_FIXED_LINKS = [

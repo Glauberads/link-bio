@@ -41,7 +41,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async session({ session, token }) {
       if (token && session.user) {
-        // @ts-expect-error Token ID assignment
         session.user.id = token.id as string;
       }
       return session;

@@ -2,11 +2,12 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
     if (!session) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
 
+    const params = await context.params;
     const body = await req.json();
     
     const resource = await prisma.resource.update({
@@ -30,10 +31,12 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
     if (!session) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+
+    const params = await context.params;
 
     await prisma.resource.delete({
       where: { id: params.id }
