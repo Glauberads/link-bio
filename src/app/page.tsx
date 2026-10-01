@@ -70,6 +70,40 @@ export default async function Home() {
 
         {/* Componente de Botões com Tracking (Client Side) */}
         <HomeButtons config={config} fixedLinks={fixedLinks} />
+
+        {/* Rodapé Premium */}
+        <footer className="mt-6 pt-6 border-t border-primary/10">
+          <div className="flex flex-col items-center gap-3 text-center">
+            
+            {/* Linha de Identidade */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-primary tracking-widest uppercase">@glauberads</span>
+            </div>
+
+            {/* Divider decorativo */}
+            <div className="flex items-center gap-3 w-full">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent to-primary/20" />
+              <div className="w-1 h-1 rounded-full bg-primary/40" />
+              <div className="flex-1 h-px bg-gradient-to-l from-transparent to-primary/20" />
+            </div>
+
+            {/* Info empresarial */}
+            <div className="flex flex-col gap-1">
+              <a href="mailto:contato@glauberads.com.br" className="text-[10px] text-text-muted hover:text-primary transition-colors">
+                contato@glauberads.com.br
+              </a>
+              <p className="text-[9px] text-text-muted/60 tracking-wider">
+                CNPJ: 31.097.622/0001-03
+              </p>
+            </div>
+
+            {/* Crédito */}
+            <p className="text-[9px] text-text-muted/50 flex items-center gap-1 mt-1">
+              Desenvolvido com <span className="text-red-500 text-xs">❤</span> <span className="font-bold text-text-muted/70">G-ADS</span>
+            </p>
+
+          </div>
+        </footer>
       </div>
 
       {/* Coluna Direita: Personagem (Oculto no Mobile) */}
