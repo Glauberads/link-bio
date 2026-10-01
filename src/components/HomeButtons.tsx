@@ -34,7 +34,15 @@ function FixedButton({
   if (fixedLinks[id]?.visible === false) return null;
 
   const content = fixedLinks[id]?.bannerUrl ? (
-    <img src={fixedLinks[id].bannerUrl} alt={fixedLinks[id]?.title || defaultTitle} className="w-full h-auto rounded-2xl object-cover hover:scale-[1.02] transition-transform shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
+    <div className="flex flex-col gap-2 hover:scale-[1.02] transition-transform group">
+      <img src={fixedLinks[id].bannerUrl} alt={fixedLinks[id]?.title || defaultTitle} className="w-full h-auto rounded-2xl object-cover shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
+      {fixedLinks[id]?.fraseDestaque && (
+        <div className="bg-gradient-to-r from-primary/90 to-primary text-background font-black text-center py-2.5 px-4 rounded-xl text-xs md:text-sm shadow-[0_0_20px_rgba(245,138,31,0.5)] border border-white/30 uppercase tracking-wider relative overflow-hidden group-hover:shadow-[0_0_30px_rgba(245,138,31,0.8)] transition-shadow">
+          <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+          {fixedLinks[id].fraseDestaque}
+        </div>
+      )}
+    </div>
   ) : (
     <div className={wrapperClassName}>
       <div className={iconWrapperClassName}><Icon className={iconClassName} /></div>
