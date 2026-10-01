@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
-import { Pencil, Save, X, Eye, EyeOff, Image as ImageIcon } from "lucide-react";
+import { Pencil, Save, X, Eye, EyeOff, Image as ImageIcon, ArrowUp, ArrowDown } from "lucide-react";
 
 export default function PersonalizacaoPage() {
   const [config, setConfig] = useState<any>({});
@@ -36,6 +36,16 @@ export default function PersonalizacaoPage() {
           ...(prev.fixedLinksConfig?.[id] || {}),
           [field]: value
         }
+      }
+    }));
+  };
+
+  const updateFixedOrder = (newOrder: string[]) => {
+    setConfig((prev: any) => ({
+      ...prev,
+      fixedLinksConfig: {
+        ...(prev.fixedLinksConfig || {}),
+        order: newOrder
       }
     }));
   };
@@ -183,15 +193,45 @@ export default function PersonalizacaoPage() {
               
               <div className="space-y-3">
                 <h4 className="font-bold text-text mb-2 border-b border-primary/20 pb-2">Botões Padrões (Visíveis na Home)</h4>
-                {DEFAULT_FIXED_LINKS.map(link => {
-                  const isEditing = editingFixedLink === link.id;
-                  const currentTitle = config.fixedLinksConfig?.[link.id]?.title || link.defaultTitle;
-                  const currentSubtitle = config.fixedLinksConfig?.[link.id]?.subtitle || link.defaultSubtitle;
-                  const currentUrl = config[link.urlField] || '';
+                {(() => {
+                  const defaultOrder = DEFAULT_FIXED_LINKS.map(l => l.id);
+                  const currentOrder = config.fixedLinksConfig?.order || defaultOrder;
+                  const orderedLinks = [...DEFAULT_FIXED_LINKS].sort((a, b) => {
+                    const idxA = currentOrder.indexOf(a.id);
+                    const idxB = currentOrder.indexOf(b.id);
+                    return (idxA !== -1 ? idxA : 99) - (idxB !== -1 ? idxB : 99);
+                  });
 
-                  return (
-                    <div key={link.id} className="bg-background border border-primary/20 p-3 rounded-xl">
-                      {isEditing ? (
+                  return orderedLinks.map((link, index) => {
+                    const isEditing = editingFixedLink === link.id;
+                    const currentTitle = config.fixedLinksConfig?.[link.id]?.title || link.defaultTitle;
+                    const currentSubtitle = config.fixedLinksConfig?.[link.id]?.subtitle || link.defaultSubtitle;
+                    const currentUrl = config[link.urlField] || '';
+
+                    return (
+                      <div key={link.id} className="bg-background border border-primary/20 p-3 rounded-xl flex gap-2">
+                        <div className="flex flex-col gap-1 items-center justify-center border-r border-primary/20 pr-2">
+                          <button onClick={() => {
+                            if (index > 0) {
+                              const newOrder = [...currentOrder];
+                              [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
+                              updateFixedOrder(newOrder);
+                            }
+                          }} className="text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted" disabled={index === 0}>
+                            <ArrowUp className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => {
+                            if (index < orderedLinks.length - 1) {
+                              const newOrder = [...currentOrder];
+                              [newOrder[index + 1], newOrder[index]] = [newOrder[index], newOrder[index + 1]];
+                              updateFixedOrder(newOrder);
+                            }
+                          }} className="text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted" disabled={index === orderedLinks.length - 1}>
+                            <ArrowDown className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="flex-1">
+                          {isEditing ? (
                         <div className="space-y-3">
                           <div className="flex justify-between items-center mb-2">
                             <span className="text-xs font-bold text-primary">Editando: {link.defaultTitle}</span>
@@ -210,6 +250,7 @@ export default function PersonalizacaoPage() {
                           <div>
                             <label className="text-[10px] text-text-muted uppercase">URL de Destino</label>
                             <input type="url" value={currentUrl} onChange={e => setConfig({...config, [link.urlField]: e.target.value})} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
+                          </div>
                           <div>
                             <label className="text-[10px] text-text-muted uppercase mb-1 block">Banner do Botão (Imagem)</label>
                             <div className="flex gap-2">
@@ -269,9 +310,9 @@ export default function PersonalizacaoPage() {
                             </button>
                           </div>
                         </div>
-                      )}
-                    </div>
-                  );
+                      </div>
+                    );
+                  });
                 })}
               </div>
 

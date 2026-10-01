@@ -62,6 +62,96 @@ export function HomeButtons({ config, fixedLinks }: { config: any, fixedLinks: a
     trackEvent(eventName, { alvo, tipo: "botao", pagina: "home" });
   };
 
+  const defaultOrder = ['tiktok', 'instagram', 'whatsapp', 'youtube', 'orcamento', 'siteOficial', 'sistemas', 'siteGenClone', 'github', 'projetos', 'dicas'];
+  const currentOrder = fixedLinks?.order || defaultOrder;
+
+  const BUTTON_CONFIGS: Record<string, any> = {
+    tiktok: {
+      href: config?.tiktokUrl || "#", isExternal: true, onClick: () => handleTrack("Contact", "TikTok", config?.tiktokUrl || "#"),
+      wrapperClassName: "bg-[#111111] border border-white/10 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_15px_rgba(255,255,255,0.05)]",
+      iconWrapperClassName: "bg-white rounded-full p-1.5", icon: Music2, iconClassName: "w-5 h-5 text-black",
+      titleClassName: "font-bold text-white text-sm", subtitleClassName: "text-[10px] text-gray-400",
+      defaultTitle: "TikTok", defaultSubtitle: "Conteúdo Rápido"
+    },
+    instagram: {
+      href: config?.instagramUrl || "#", isExternal: true, onClick: () => handleTrack("Contact", "Instagram", config?.instagramUrl || "#"),
+      wrapperClassName: "bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#FCAF45] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(253,29,29,0.3)] border border-white/10",
+      iconWrapperClassName: "bg-white rounded-full p-1.5", icon: Camera, iconClassName: "w-5 h-5 text-[#E1306C]",
+      titleClassName: "font-bold text-white text-sm", subtitleClassName: "text-[10px] text-white/80",
+      defaultTitle: "Instagram", defaultSubtitle: "Acompanhe meu dia a dia"
+    },
+    whatsapp: {
+      href: config?.whatsappUrl || "#", isExternal: true, onClick: () => handleTrack("Contact", "WhatsApp", config?.whatsappUrl || "#"),
+      wrapperClassName: "bg-[#25D366] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(37,211,102,0.3)] border border-white/10",
+      iconWrapperClassName: "bg-white rounded-full p-1.5", icon: MessageCircle, iconClassName: "w-5 h-5 text-[#25D366]",
+      titleClassName: "font-bold text-white text-sm", subtitleClassName: "text-[10px] text-white/90",
+      defaultTitle: "Falar comigo no WhatsApp", defaultSubtitle: "Converse diretamente comigo"
+    },
+    youtube: {
+      href: config?.youtubeUrl || "#", isExternal: true, onClick: () => handleTrack("Contact", "YouTube", config?.youtubeUrl || "#"),
+      wrapperClassName: "bg-surface/40 hover:bg-surface/80 border border-primary/20 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(255,0,0,0.15)] group",
+      iconWrapperClassName: "bg-[#FF0000]/10 p-2 rounded-xl group-hover:bg-[#FF0000]/20 transition-colors", icon: Play, iconClassName: "w-5 h-5 text-[#FF0000]",
+      titleClassName: "font-bold text-text group-hover:text-primary transition-colors text-sm", subtitleClassName: "text-[10px] text-text-muted",
+      defaultTitle: "YouTube", defaultSubtitle: "Acompanhe vídeos exclusivos",
+      condition: () => !!config?.youtubeUrl
+    },
+    orcamento: {
+      href: config?.orcamentoUrl || "/orcamento", isExternal: false, onClick: () => handleTrack("Lead", "Orçamento", config?.orcamentoUrl || "/orcamento"),
+      wrapperClassName: "bg-surface border-y border-r border-primary/20 border-l-4 border-l-gold rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group",
+      iconWrapperClassName: "bg-gold/10 p-2 rounded-xl group-hover:bg-gold/20 transition-colors", icon: Laptop, iconClassName: "w-5 h-5 text-gold",
+      titleClassName: "font-bold text-text text-sm", subtitleClassName: "text-[10px] text-text-muted",
+      defaultTitle: "Orçamento para desenvolvimento de sistemas", defaultSubtitle: "Sites, sistemas, automações e soluções sob medida"
+    },
+    siteOficial: {
+      href: config?.siteOficialUrl || "#", isExternal: true, onClick: () => handleTrack("Lead", "Site Oficial", config?.siteOficialUrl || "#"),
+      wrapperClassName: "bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#00A859] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group",
+      iconWrapperClassName: "bg-[#00A859]/10 p-2 rounded-xl group-hover:bg-[#00A859]/20 transition-colors", icon: Globe, iconClassName: "w-5 h-5 text-[#00A859]",
+      titleClassName: "font-bold text-text text-sm", subtitleClassName: "text-[10px] text-text-muted",
+      defaultTitle: "Conhecer a FFR do Brasil", defaultSubtitle: "Acesse nosso site oficial"
+    },
+    sistemas: {
+      href: config?.sistemasUrl || "/sistemas", isExternal: false, onClick: () => handleTrack("ViewContent", "Sistemas", config?.sistemasUrl || "/sistemas"),
+      wrapperClassName: "bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#8D6E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group",
+      iconWrapperClassName: "bg-[#8D6E63]/10 p-2 rounded-xl group-hover:bg-[#8D6E63]/20 transition-colors", icon: Briefcase, iconClassName: "w-5 h-5 text-[#8D6E63]",
+      titleClassName: "font-bold text-text text-sm", subtitleClassName: "text-[10px] text-text-muted",
+      defaultTitle: "9 sistemas prontos para personalizar e revender", defaultSubtitle: "Só R$ 19,90 • 7 dias de garantia"
+    },
+    siteGenClone: {
+      href: config?.siteGenUrl || "/projetos/sitegenclone", isExternal: false, onClick: () => handleTrack("ViewContent", "SiteGenClone", config?.siteGenUrl || "/projetos/sitegenclone"),
+      wrapperClassName: "bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#E91E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group",
+      iconWrapperClassName: "bg-[#E91E63]/10 p-2 rounded-xl group-hover:bg-[#E91E63]/20 transition-colors", icon: Copy, iconClassName: "w-5 h-5 text-[#E91E63]",
+      titleClassName: "font-bold text-text text-sm", subtitleClassName: "text-[10px] text-text-muted",
+      defaultTitle: "SiteGenClone", defaultSubtitle: "Clonador de sites para projetos autorizados"
+    },
+    github: {
+      href: config?.githubUrl || "/biblioteca", isExternal: false, onClick: () => handleTrack("ViewContent", "GitHub", config?.githubUrl || "/biblioteca"),
+      wrapperClassName: "bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#9E9E9E] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group",
+      iconWrapperClassName: "bg-[#9E9E9E]/10 p-2 rounded-xl group-hover:bg-[#9E9E9E]/20 transition-colors", icon: Code, iconClassName: "w-5 h-5 text-[#9E9E9E]",
+      titleClassName: "font-bold text-text text-sm", subtitleClassName: "text-[10px] text-text-muted",
+      defaultTitle: "Repositórios GitHub Premium Free", defaultSubtitle: "Recursos gratuitos organizados por categoria"
+    },
+    projetos: {
+      href: config?.projetosUrl || "/projetos", isExternal: false, onClick: () => handleTrack("ViewContent", "Projetos", config?.projetosUrl || "/projetos"),
+      wrapperClassName: "bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#4CAF50] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group",
+      iconWrapperClassName: "bg-[#4CAF50]/10 p-2 rounded-xl group-hover:bg-[#4CAF50]/20 transition-colors", icon: FolderOpen, iconClassName: "w-5 h-5 text-[#4CAF50]",
+      titleClassName: "font-bold text-text text-sm", subtitleClassName: "text-[10px] text-text-muted",
+      defaultTitle: "Ver projetos desenvolvidos", defaultSubtitle: "Sistemas, produtos e projetos em evolução"
+    },
+    dicas: {
+      href: config?.dicasUrl || "/biblioteca", isExternal: false, onClick: () => handleTrack("ViewContent", "Dicas", config?.dicasUrl || "/biblioteca"),
+      wrapperClassName: "bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#2196F3] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group",
+      iconWrapperClassName: "bg-[#2196F3]/10 p-2 rounded-xl group-hover:bg-[#2196F3]/20 transition-colors", icon: Diamond, iconClassName: "w-5 h-5 text-[#2196F3]",
+      titleClassName: "font-bold text-text text-sm", subtitleClassName: "text-[10px] text-text-muted",
+      defaultTitle: "Dicas grátis de IA, automações e ferramentas", defaultSubtitle: "Aprenda com conteúdos práticos e links úteis"
+    }
+  };
+
+  const orderedLinks = [...defaultOrder].sort((a, b) => {
+    const idxA = currentOrder.indexOf(a);
+    const idxB = currentOrder.indexOf(b);
+    return (idxA !== -1 ? idxA : 99) - (idxB !== -1 ? idxB : 99);
+  });
+
   return (
     <div className="w-full flex flex-col gap-3 pb-20">
       
@@ -96,42 +186,22 @@ export function HomeButtons({ config, fixedLinks }: { config: any, fixedLinks: a
         </div>
       </div>
 
-      <FixedButton 
-        id="tiktok" href={config?.tiktokUrl || "#"} isExternal onClick={() => handleTrack("Contact", "TikTok", config?.tiktokUrl || "#")} fixedLinks={fixedLinks}
-        wrapperClassName="bg-[#111111] border border-white/10 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-        iconWrapperClassName="bg-white rounded-full p-1.5" icon={Music2} iconClassName="w-5 h-5 text-black"
-        titleClassName="font-bold text-white text-sm" subtitleClassName="text-[10px] text-gray-400"
-        defaultTitle="TikTok" defaultSubtitle="Conteúdo Rápido"
-      />
-
-      <FixedButton 
-        id="instagram" href={config?.instagramUrl || "#"} isExternal onClick={() => handleTrack("Contact", "Instagram", config?.instagramUrl || "#")} fixedLinks={fixedLinks}
-        wrapperClassName="bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#FCAF45] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(253,29,29,0.3)] border border-white/10"
-        iconWrapperClassName="bg-white rounded-full p-1.5" icon={Camera} iconClassName="w-5 h-5 text-[#E1306C]"
-        titleClassName="font-bold text-white text-sm" subtitleClassName="text-[10px] text-white/80"
-        defaultTitle="Instagram" defaultSubtitle="Acompanhe meu dia a dia"
-      />
-
-      <FixedButton 
-        id="whatsapp" href={config?.whatsappUrl || "#"} isExternal onClick={() => handleTrack("Contact", "WhatsApp", config?.whatsappUrl || "#")} fixedLinks={fixedLinks}
-        wrapperClassName="bg-[#25D366] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(37,211,102,0.3)] border border-white/10"
-        iconWrapperClassName="bg-white rounded-full p-1.5" icon={MessageCircle} iconClassName="w-5 h-5 text-[#25D366]"
-        titleClassName="font-bold text-white text-sm" subtitleClassName="text-[10px] text-white/90"
-        defaultTitle="Falar comigo no WhatsApp" defaultSubtitle="Converse diretamente comigo"
-      />
-
-      {config?.youtubeUrl && (
-        <FixedButton 
-          id="youtube" href={config.youtubeUrl} isExternal onClick={() => handleTrack("Contact", "YouTube", config.youtubeUrl)} fixedLinks={fixedLinks}
-          wrapperClassName="bg-surface/40 hover:bg-surface/80 border border-primary/20 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(255,0,0,0.15)] group"
-          iconWrapperClassName="bg-[#FF0000]/10 p-2 rounded-xl group-hover:bg-[#FF0000]/20 transition-colors" icon={Play} iconClassName="w-5 h-5 text-[#FF0000]"
-          titleClassName="font-bold text-text group-hover:text-primary transition-colors text-sm" subtitleClassName="text-[10px] text-text-muted"
-          defaultTitle="YouTube" defaultSubtitle="Acompanhe vídeos exclusivos"
-        />
-      )}
+      {orderedLinks.map((id) => {
+        const btnConfig = BUTTON_CONFIGS[id];
+        if (btnConfig.condition && !btnConfig.condition()) return null;
+        
+        return (
+          <FixedButton 
+            key={id}
+            id={id}
+            fixedLinks={fixedLinks}
+            {...btnConfig}
+          />
+        );
+      })}
 
       {Array.isArray(config?.customLinks) && config.customLinks.map((link: any) => (
-        <a key={link.id} href={link.url} target="_blank" onClick={() => handleTrack("Lead", `Custom Link - ${link.title}`, link.url)} className="bg-surface/40 hover:bg-surface/80 border border-primary/20 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform group">
+        <a key={link.id} href={link.url} target="_blank" onClick={() => handleTrack("Lead", `Custom Link - ${link.title}`, link.url)} className="bg-surface/40 hover:bg-surface/80 border border-primary/20 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform group mt-4">
           {link.iconUrl ? (
             link.iconUrl.endsWith('.mp4') ? (
               <video src={link.iconUrl} autoPlay loop muted playsInline className="w-9 h-9 object-cover rounded-xl" />
@@ -147,62 +217,6 @@ export function HomeButtons({ config, fixedLinks }: { config: any, fixedLinks: a
           </div>
         </a>
       ))}
-
-      <FixedButton 
-        id="orcamento" href={config?.orcamentoUrl || "/orcamento"} onClick={() => handleTrack("Lead", "Orçamento", config?.orcamentoUrl || "/orcamento")} fixedLinks={fixedLinks}
-        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-gold rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
-        iconWrapperClassName="bg-gold/10 p-2 rounded-xl group-hover:bg-gold/20 transition-colors" icon={Laptop} iconClassName="w-5 h-5 text-gold"
-        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
-        defaultTitle="Orçamento para desenvolvimento de sistemas" defaultSubtitle="Sites, sistemas, automações e soluções sob medida"
-      />
-
-      <FixedButton 
-        id="siteOficial" href={config?.siteOficialUrl || "#"} isExternal onClick={() => handleTrack("Lead", "Site Oficial", config?.siteOficialUrl || "#")} fixedLinks={fixedLinks}
-        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#00A859] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
-        iconWrapperClassName="bg-[#00A859]/10 p-2 rounded-xl group-hover:bg-[#00A859]/20 transition-colors" icon={Globe} iconClassName="w-5 h-5 text-[#00A859]"
-        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
-        defaultTitle="Conhecer a FFR do Brasil" defaultSubtitle="Acesse nosso site oficial"
-      />
-
-      <FixedButton 
-        id="sistemas" href={config?.sistemasUrl || "/sistemas"} onClick={() => handleTrack("ViewContent", "Sistemas", config?.sistemasUrl || "/sistemas")} fixedLinks={fixedLinks}
-        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#8D6E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
-        iconWrapperClassName="bg-[#8D6E63]/10 p-2 rounded-xl group-hover:bg-[#8D6E63]/20 transition-colors" icon={Briefcase} iconClassName="w-5 h-5 text-[#8D6E63]"
-        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
-        defaultTitle="9 sistemas prontos para personalizar e revender" defaultSubtitle="Só R$ 19,90 • 7 dias de garantia"
-      />
-
-      <FixedButton 
-        id="siteGenClone" href={config?.siteGenUrl || "/projetos/sitegenclone"} onClick={() => handleTrack("ViewContent", "SiteGenClone", config?.siteGenUrl || "/projetos/sitegenclone")} fixedLinks={fixedLinks}
-        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#E91E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
-        iconWrapperClassName="bg-[#E91E63]/10 p-2 rounded-xl group-hover:bg-[#E91E63]/20 transition-colors" icon={Copy} iconClassName="w-5 h-5 text-[#E91E63]"
-        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
-        defaultTitle="SiteGenClone" defaultSubtitle="Clonador de sites para projetos autorizados"
-      />
-
-      <FixedButton 
-        id="github" href={config?.githubUrl || "/biblioteca"} onClick={() => handleTrack("ViewContent", "GitHub", config?.githubUrl || "/biblioteca")} fixedLinks={fixedLinks}
-        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#9E9E9E] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
-        iconWrapperClassName="bg-[#9E9E9E]/10 p-2 rounded-xl group-hover:bg-[#9E9E9E]/20 transition-colors" icon={Code} iconClassName="w-5 h-5 text-[#9E9E9E]"
-        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
-        defaultTitle="Repositórios GitHub Premium Free" defaultSubtitle="Recursos gratuitos organizados por categoria"
-      />
-
-      <FixedButton 
-        id="projetos" href={config?.projetosUrl || "/projetos"} onClick={() => handleTrack("ViewContent", "Projetos", config?.projetosUrl || "/projetos")} fixedLinks={fixedLinks}
-        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#4CAF50] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
-        iconWrapperClassName="bg-[#4CAF50]/10 p-2 rounded-xl group-hover:bg-[#4CAF50]/20 transition-colors" icon={FolderOpen} iconClassName="w-5 h-5 text-[#4CAF50]"
-        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
-        defaultTitle="Ver projetos desenvolvidos" defaultSubtitle="Sistemas, produtos e projetos em evolução"
-      />
-
-      <FixedButton 
-        id="dicas" href={config?.dicasUrl || "/biblioteca"} onClick={() => handleTrack("ViewContent", "Dicas", config?.dicasUrl || "/biblioteca")} fixedLinks={fixedLinks}
-        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#2196F3] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
-        iconWrapperClassName="bg-[#2196F3]/10 p-2 rounded-xl group-hover:bg-[#2196F3]/20 transition-colors" icon={Diamond} iconClassName="w-5 h-5 text-[#2196F3]"
-        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
-        defaultTitle="Dicas grátis de IA, automações e ferramentas" defaultSubtitle="Aprenda com conteúdos práticos e links úteis"
-      />
       
     </div>
   );
