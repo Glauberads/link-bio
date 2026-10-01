@@ -51,17 +51,17 @@ export default async function Home() {
              <Search className="w-5 h-5 text-[#00e676]" />
           </div>
           <div className="ml-4 flex-1 pr-2">
-            <h3 className="font-bold text-text text-sm">Pesquise no Conecta FFR</h3>
-            <p className="text-[10px] text-text-muted mt-0.5">Encontre materiais, repositórios, sistemas, projetos e links.</p>
+            <h3 className="font-bold text-text text-sm">{fixedLinks.searchBox?.title || "Pesquise no Conecta FFR"}</h3>
+            <p className="text-[10px] text-text-muted mt-0.5">{fixedLinks.searchBox?.subtitle || "Encontre materiais, repositórios, sistemas, projetos e links."}</p>
             <Link href="/biblioteca">
               <input 
                 type="text" 
-                placeholder="Pesquise por IA, agentes, SaaS, imagens..." 
+                placeholder={fixedLinks.searchBox?.placeholder || "Pesquise por IA, agentes, SaaS, imagens..."}
                 className="w-full mt-3 bg-background border border-primary/20 rounded-xl px-4 py-2.5 text-xs text-text outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner cursor-pointer" 
                 readOnly
               />
             </Link>
-            <p className="text-[9px] text-text-muted mt-2">Digite para pesquisar em todo o site.</p>
+            <p className="text-[9px] text-text-muted mt-2">{fixedLinks.searchBox?.footer || "Digite para pesquisar em todo o site."}</p>
           </div>
         </div>
 

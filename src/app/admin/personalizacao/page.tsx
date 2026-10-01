@@ -155,6 +155,28 @@ export default function PersonalizacaoPage() {
           </div>
 
           <div className="bg-surface border border-primary/20 rounded-2xl p-6 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+            <h3 className="text-xl font-bold text-text mb-4">Caixa de Pesquisa</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-medium text-text-muted uppercase tracking-wider">Título da Busca</label>
+                <input type="text" value={config.fixedLinksConfig?.searchBox?.title || ''} onChange={e => updateFixedLink('searchBox', 'title', e.target.value)} className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text mt-1 text-sm outline-none focus:border-primary transition-colors" placeholder="Pesquise no Conecta FFR" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-text-muted uppercase tracking-wider">Subtítulo</label>
+                <input type="text" value={config.fixedLinksConfig?.searchBox?.subtitle || ''} onChange={e => updateFixedLink('searchBox', 'subtitle', e.target.value)} className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text mt-1 text-sm outline-none focus:border-primary transition-colors" placeholder="Encontre materiais, repositórios..." />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-text-muted uppercase tracking-wider">Placeholder (Texto dentro do campo)</label>
+                <input type="text" value={config.fixedLinksConfig?.searchBox?.placeholder || ''} onChange={e => updateFixedLink('searchBox', 'placeholder', e.target.value)} className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text mt-1 text-sm outline-none focus:border-primary transition-colors" placeholder="Pesquise por IA, agentes, SaaS..." />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-text-muted uppercase tracking-wider">Rodapé (Texto abaixo do campo)</label>
+                <input type="text" value={config.fixedLinksConfig?.searchBox?.footer || ''} onChange={e => updateFixedLink('searchBox', 'footer', e.target.value)} className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text mt-1 text-sm outline-none focus:border-primary transition-colors" placeholder="Digite para pesquisar em todo o site." />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-surface border border-primary/20 rounded-2xl p-6 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
             <h3 className="text-xl font-bold text-text mb-4">Links dos Botões</h3>
             
             <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
