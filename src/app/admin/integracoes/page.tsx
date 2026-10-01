@@ -59,15 +59,27 @@ export default function IntegracoesPage() {
             <h3 className="text-xl font-bold text-text">Pixel do Meta (Facebook)</h3>
           </div>
           <p className="text-sm text-text-muted mb-4">Insira o ID do seu Pixel para rastrear eventos e pageviews automaticamente.</p>
-          <div>
-            <label className="text-xs font-medium text-text-muted uppercase tracking-wider block mb-1">ID do Pixel (Ex: 1234567890)</label>
-            <input 
-              type="text" 
-              value={config.metaPixelId || ''} 
-              onChange={e => setConfig({...config, metaPixelId: e.target.value})} 
-              className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text text-sm outline-none focus:border-primary transition-colors" 
-              placeholder="Digite o ID do Pixel" 
-            />
+          <div className="space-y-4">
+            <div>
+              <label className="text-xs font-medium text-text-muted uppercase tracking-wider block mb-1">ID do Pixel (Ex: 1234567890)</label>
+              <input 
+                type="text" 
+                value={config.metaPixelId || ''} 
+                onChange={e => setConfig({...config, metaPixelId: e.target.value})} 
+                className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text text-sm outline-none focus:border-primary transition-colors" 
+                placeholder="Digite o ID do Pixel" 
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-text-muted uppercase tracking-wider block mb-1">Token de API de Conversão (CAPI)</label>
+              <input 
+                type="text" 
+                value={config.fixedLinksConfig?.metaApiToken || ''} 
+                onChange={e => setConfig({...config, fixedLinksConfig: {...(config.fixedLinksConfig || {}), metaApiToken: e.target.value}})} 
+                className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text text-sm outline-none focus:border-primary transition-colors" 
+                placeholder="Cole o token de acesso (opcional)" 
+              />
+            </div>
           </div>
         </div>
 
