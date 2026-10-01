@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
-import { Pencil, Save, X } from "lucide-react";
+import { Pencil, Save, X, Eye, EyeOff, Image as ImageIcon } from "lucide-react";
 
 export default function PersonalizacaoPage() {
   const [config, setConfig] = useState<any>({});
@@ -27,7 +27,7 @@ export default function PersonalizacaoPage() {
     { id: 'dicas', defaultTitle: 'Dicas grátis de IA', defaultSubtitle: 'Aprenda com conteúdos práticos', urlField: 'dicasUrl' },
   ];
 
-  const updateFixedLink = (id: string, field: string, value: string) => {
+  const updateFixedLink = (id: string, field: string, value: any) => {
     setConfig((prev: any) => ({
       ...prev,
       fixedLinksConfig: {
@@ -210,17 +210,64 @@ export default function PersonalizacaoPage() {
                           <div>
                             <label className="text-[10px] text-text-muted uppercase">URL de Destino</label>
                             <input type="url" value={currentUrl} onChange={e => setConfig({...config, [link.urlField]: e.target.value})} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
+                          <div>
+                            <label className="text-[10px] text-text-muted uppercase mb-1 block">Banner do Botão (Imagem)</label>
+                            <div className="flex gap-2">
+                              <input 
+                                type="file" 
+                                accept="image/*,video/mp4"
+                                onChange={async (e) => {
+                                  if (e.target.files?.[0]) {
+                                    const url = await handleUpload(e.target.files[0], `banner_${link.id}`);
+                                    if (url) updateFixedLink(link.id, 'bannerUrl', url);
+                                  }
+                                }}
+                                className="hidden" 
+                                id={`banner-${link.id}`} 
+                              />
+                              <label htmlFor={`banner-${link.id}`} className="flex-1 bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs cursor-pointer flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors">
+                                <ImageIcon className="w-4 h-4" /> Upload Imagem
+                              </label>
+                              {config.fixedLinksConfig?.[link.id]?.bannerUrl && (
+                                <button onClick={() => updateFixedLink(link.id, 'bannerUrl', null)} className="px-3 py-2 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg hover:bg-red-500/20">
+                                  <X className="w-4 h-4" />
+                                </button>
+                              )}
+                            </div>
+                            {config.fixedLinksConfig?.[link.id]?.bannerUrl && (
+                              <img src={config.fixedLinksConfig[link.id].bannerUrl} alt="Banner" className="mt-2 w-full h-12 object-cover rounded-md border border-primary/20" />
+                            )}
                           </div>
                         </div>
                       ) : (
                         <div className="flex justify-between items-center group">
                           <div>
-                            <h5 className="text-sm font-bold text-text group-hover:text-primary transition-colors">{currentTitle}</h5>
+                            <h5 className="text-sm font-bold text-text group-hover:text-primary transition-colors flex items-center gap-2">
+                              {currentTitle}
+                              {config.fixedLinksConfig?.[link.id]?.visible === false && (
+                                <span className="px-1.5 py-0.5 rounded text-[8px] bg-red-500/20 text-red-400 font-normal">Oculto</span>
+                              )}
+                              {config.fixedLinksConfig?.[link.id]?.bannerUrl && (
+                                <span className="px-1.5 py-0.5 rounded text-[8px] bg-primary/20 text-primary font-normal flex items-center gap-1"><ImageIcon className="w-3 h-3" /> Banner</span>
+                              )}
+                            </h5>
                             <p className="text-[10px] text-text-muted truncate max-w-[200px]">{currentSubtitle}</p>
                           </div>
-                          <button onClick={() => setEditingFixedLink(link.id)} className="p-2 bg-surface hover:bg-primary/20 rounded-lg text-text-muted hover:text-primary transition-colors border border-primary/20">
-                            <Pencil className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center gap-1">
+                            <button 
+                              onClick={() => {
+                                const currentVisible = config.fixedLinksConfig?.[link.id]?.visible !== false;
+                                updateFixedLink(link.id, 'visible', !currentVisible);
+                              }} 
+                              className={`p-2 bg-surface hover:bg-primary/20 rounded-lg transition-colors border border-primary/20 ${config.fixedLinksConfig?.[link.id]?.visible === false ? 'text-red-400' : 'text-primary'}`}
+                              title={config.fixedLinksConfig?.[link.id]?.visible === false ? 'Mostrar Botão' : 'Ocultar Botão'}
+                            >
+                              {config.fixedLinksConfig?.[link.id]?.visible === false ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                            <button onClick={() => setEditingFixedLink(link.id)} className="p-2 bg-surface hover:bg-primary/20 rounded-lg text-text-muted hover:text-primary transition-colors border border-primary/20">
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>

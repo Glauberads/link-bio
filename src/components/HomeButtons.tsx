@@ -16,6 +16,46 @@ function SparklesIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
+function FixedButton({ 
+  id, 
+  href, 
+  onClick, 
+  fixedLinks, 
+  wrapperClassName, 
+  iconWrapperClassName, 
+  icon: Icon, 
+  iconClassName, 
+  titleClassName, 
+  subtitleClassName, 
+  defaultTitle, 
+  defaultSubtitle, 
+  isExternal 
+}: any) {
+  if (fixedLinks[id]?.visible === false) return null;
+
+  const content = fixedLinks[id]?.bannerUrl ? (
+    <img src={fixedLinks[id].bannerUrl} alt={fixedLinks[id]?.title || defaultTitle} className="w-full h-auto rounded-2xl object-cover hover:scale-[1.02] transition-transform shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
+  ) : (
+    <div className={wrapperClassName}>
+      <div className={iconWrapperClassName}><Icon className={iconClassName} /></div>
+      <div>
+        <h3 className={titleClassName}>{fixedLinks[id]?.title || defaultTitle}</h3>
+        <p className={subtitleClassName}>{fixedLinks[id]?.subtitle || defaultSubtitle}</p>
+      </div>
+    </div>
+  );
+
+  return isExternal ? (
+    <a href={href} target="_blank" onClick={onClick} className="block w-full">
+      {content}
+    </a>
+  ) : (
+    <Link href={href} onClick={onClick} className="block w-full">
+      {content}
+    </Link>
+  );
+}
+
 export function HomeButtons({ config, fixedLinks }: { config: any, fixedLinks: any }) {
   
   const handleTrack = (eventName: string, alvo: string, url: string) => {
@@ -36,14 +76,14 @@ export function HomeButtons({ config, fixedLinks }: { config: any, fixedLinks: a
         <div className="ml-4 flex-1 pr-2">
           <h3 className="font-bold text-text text-sm">{fixedLinks.searchBox?.title || "Pesquise no Conecta FFR"}</h3>
           <p className="text-[10px] text-text-muted mt-0.5">{fixedLinks.searchBox?.subtitle || "Encontre materiais, repositórios, sistemas, projetos e links."}</p>
-          <Link href="/biblioteca" className="block w-full">
+          <div className="block w-full">
             <input 
               type="text" 
               placeholder={fixedLinks.searchBox?.placeholder || "Pesquise por IA, agentes, SaaS, imagens..."}
               className="w-full mt-3 bg-background border border-primary/20 rounded-xl px-4 py-2.5 text-xs text-text outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner cursor-pointer pointer-events-none" 
               readOnly
             />
-          </Link>
+          </div>
           <p className="text-[9px] text-text-muted mt-2">{fixedLinks.searchBox?.footer || "Digite para pesquisar em todo o site."}</p>
         </div>
       </div>
@@ -56,38 +96,38 @@ export function HomeButtons({ config, fixedLinks }: { config: any, fixedLinks: a
         </div>
       </div>
 
-      <a href={config?.tiktokUrl || "#"} onClick={() => handleTrack("Contact", "TikTok", config?.tiktokUrl || "#")} className="bg-[#111111] border border-white/10 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_15px_rgba(255,255,255,0.05)]">
-        <div className="bg-white rounded-full p-1.5"><Music2 className="w-5 h-5 text-black" /></div>
-        <div>
-          <h3 className="font-bold text-white text-sm">{fixedLinks.tiktok?.title || "TikTok"}</h3>
-          <p className="text-[10px] text-gray-400">{fixedLinks.tiktok?.subtitle || "Conteúdo Rápido"}</p>
-        </div>
-      </a>
+      <FixedButton 
+        id="tiktok" href={config?.tiktokUrl || "#"} isExternal onClick={() => handleTrack("Contact", "TikTok", config?.tiktokUrl || "#")} fixedLinks={fixedLinks}
+        wrapperClassName="bg-[#111111] border border-white/10 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+        iconWrapperClassName="bg-white rounded-full p-1.5" icon={Music2} iconClassName="w-5 h-5 text-black"
+        titleClassName="font-bold text-white text-sm" subtitleClassName="text-[10px] text-gray-400"
+        defaultTitle="TikTok" defaultSubtitle="Conteúdo Rápido"
+      />
 
-      <a href={config?.instagramUrl || "#"} onClick={() => handleTrack("Contact", "Instagram", config?.instagramUrl || "#")} className="bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#FCAF45] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(253,29,29,0.3)] border border-white/10">
-        <div className="bg-white rounded-full p-1.5"><Camera className="w-5 h-5 text-[#E1306C]" /></div>
-        <div>
-          <h3 className="font-bold text-white text-sm">{fixedLinks.instagram?.title || "Instagram"}</h3>
-          <p className="text-[10px] text-white/80">{fixedLinks.instagram?.subtitle || "Acompanhe meu dia a dia"}</p>
-        </div>
-      </a>
+      <FixedButton 
+        id="instagram" href={config?.instagramUrl || "#"} isExternal onClick={() => handleTrack("Contact", "Instagram", config?.instagramUrl || "#")} fixedLinks={fixedLinks}
+        wrapperClassName="bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#FCAF45] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(253,29,29,0.3)] border border-white/10"
+        iconWrapperClassName="bg-white rounded-full p-1.5" icon={Camera} iconClassName="w-5 h-5 text-[#E1306C]"
+        titleClassName="font-bold text-white text-sm" subtitleClassName="text-[10px] text-white/80"
+        defaultTitle="Instagram" defaultSubtitle="Acompanhe meu dia a dia"
+      />
 
-      <a href={config?.whatsappUrl || "#"} onClick={() => handleTrack("Contact", "WhatsApp", config?.whatsappUrl || "#")} className="bg-[#25D366] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(37,211,102,0.3)] border border-white/10">
-        <div className="bg-white rounded-full p-1.5"><MessageCircle className="w-5 h-5 text-[#25D366]" /></div>
-        <div>
-          <h3 className="font-bold text-white text-sm">{fixedLinks.whatsapp?.title || "Falar comigo no WhatsApp"}</h3>
-          <p className="text-[10px] text-white/90">{fixedLinks.whatsapp?.subtitle || "Converse diretamente comigo"}</p>
-        </div>
-      </a>
+      <FixedButton 
+        id="whatsapp" href={config?.whatsappUrl || "#"} isExternal onClick={() => handleTrack("Contact", "WhatsApp", config?.whatsappUrl || "#")} fixedLinks={fixedLinks}
+        wrapperClassName="bg-[#25D366] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(37,211,102,0.3)] border border-white/10"
+        iconWrapperClassName="bg-white rounded-full p-1.5" icon={MessageCircle} iconClassName="w-5 h-5 text-[#25D366]"
+        titleClassName="font-bold text-white text-sm" subtitleClassName="text-[10px] text-white/90"
+        defaultTitle="Falar comigo no WhatsApp" defaultSubtitle="Converse diretamente comigo"
+      />
 
       {config?.youtubeUrl && (
-        <a href={config.youtubeUrl} target="_blank" onClick={() => handleTrack("Contact", "YouTube", config.youtubeUrl)} className="bg-surface/40 hover:bg-surface/80 border border-primary/20 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(255,0,0,0.15)] group">
-          <div className="bg-[#FF0000]/10 p-2 rounded-xl group-hover:bg-[#FF0000]/20 transition-colors"><Play className="w-5 h-5 text-[#FF0000]" /></div>
-          <div>
-            <h3 className="font-bold text-text group-hover:text-primary transition-colors text-sm">{fixedLinks.youtube?.title || "YouTube"}</h3>
-            <p className="text-[10px] text-text-muted">{fixedLinks.youtube?.subtitle || "Acompanhe vídeos exclusivos"}</p>
-          </div>
-        </a>
+        <FixedButton 
+          id="youtube" href={config.youtubeUrl} isExternal onClick={() => handleTrack("Contact", "YouTube", config.youtubeUrl)} fixedLinks={fixedLinks}
+          wrapperClassName="bg-surface/40 hover:bg-surface/80 border border-primary/20 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(255,0,0,0.15)] group"
+          iconWrapperClassName="bg-[#FF0000]/10 p-2 rounded-xl group-hover:bg-[#FF0000]/20 transition-colors" icon={Play} iconClassName="w-5 h-5 text-[#FF0000]"
+          titleClassName="font-bold text-text group-hover:text-primary transition-colors text-sm" subtitleClassName="text-[10px] text-text-muted"
+          defaultTitle="YouTube" defaultSubtitle="Acompanhe vídeos exclusivos"
+        />
       )}
 
       {Array.isArray(config?.customLinks) && config.customLinks.map((link: any) => (
@@ -108,61 +148,61 @@ export function HomeButtons({ config, fixedLinks }: { config: any, fixedLinks: a
         </a>
       ))}
 
-      <Link href={config?.orcamentoUrl || "/orcamento"} onClick={() => handleTrack("Lead", "Orçamento", config?.orcamentoUrl || "/orcamento")} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-gold rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-        <div className="bg-gold/10 p-2 rounded-xl group-hover:bg-gold/20 transition-colors"><Laptop className="w-5 h-5 text-gold" /></div>
-        <div>
-          <h3 className="font-bold text-text text-sm">{fixedLinks.orcamento?.title || "Orçamento para desenvolvimento de sistemas"}</h3>
-          <p className="text-[10px] text-text-muted">{fixedLinks.orcamento?.subtitle || "Sites, sistemas, automações e soluções sob medida"}</p>
-        </div>
-      </Link>
+      <FixedButton 
+        id="orcamento" href={config?.orcamentoUrl || "/orcamento"} onClick={() => handleTrack("Lead", "Orçamento", config?.orcamentoUrl || "/orcamento")} fixedLinks={fixedLinks}
+        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-gold rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
+        iconWrapperClassName="bg-gold/10 p-2 rounded-xl group-hover:bg-gold/20 transition-colors" icon={Laptop} iconClassName="w-5 h-5 text-gold"
+        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
+        defaultTitle="Orçamento para desenvolvimento de sistemas" defaultSubtitle="Sites, sistemas, automações e soluções sob medida"
+      />
 
-      <a href={config?.siteOficialUrl || "#"} onClick={() => handleTrack("Lead", "Site Oficial", config?.siteOficialUrl || "#")} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#00A859] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-        <div className="bg-[#00A859]/10 p-2 rounded-xl group-hover:bg-[#00A859]/20 transition-colors"><Globe className="w-5 h-5 text-[#00A859]" /></div>
-        <div>
-          <h3 className="font-bold text-text text-sm">{fixedLinks.siteOficial?.title || "Conhecer a FFR do Brasil"}</h3>
-          <p className="text-[10px] text-text-muted">{fixedLinks.siteOficial?.subtitle || "Acesse nosso site oficial"}</p>
-        </div>
-      </a>
+      <FixedButton 
+        id="siteOficial" href={config?.siteOficialUrl || "#"} isExternal onClick={() => handleTrack("Lead", "Site Oficial", config?.siteOficialUrl || "#")} fixedLinks={fixedLinks}
+        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#00A859] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
+        iconWrapperClassName="bg-[#00A859]/10 p-2 rounded-xl group-hover:bg-[#00A859]/20 transition-colors" icon={Globe} iconClassName="w-5 h-5 text-[#00A859]"
+        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
+        defaultTitle="Conhecer a FFR do Brasil" defaultSubtitle="Acesse nosso site oficial"
+      />
 
-      <Link href={config?.sistemasUrl || "/sistemas"} onClick={() => handleTrack("ViewContent", "Sistemas", config?.sistemasUrl || "/sistemas")} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#8D6E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-        <div className="bg-[#8D6E63]/10 p-2 rounded-xl group-hover:bg-[#8D6E63]/20 transition-colors"><Briefcase className="w-5 h-5 text-[#8D6E63]" /></div>
-        <div>
-          <h3 className="font-bold text-text text-sm">{fixedLinks.sistemas?.title || "9 sistemas prontos para personalizar e revender"}</h3>
-          <p className="text-[10px] text-text-muted">{fixedLinks.sistemas?.subtitle || "Só R$ 19,90 • 7 dias de garantia"}</p>
-        </div>
-      </Link>
+      <FixedButton 
+        id="sistemas" href={config?.sistemasUrl || "/sistemas"} onClick={() => handleTrack("ViewContent", "Sistemas", config?.sistemasUrl || "/sistemas")} fixedLinks={fixedLinks}
+        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#8D6E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
+        iconWrapperClassName="bg-[#8D6E63]/10 p-2 rounded-xl group-hover:bg-[#8D6E63]/20 transition-colors" icon={Briefcase} iconClassName="w-5 h-5 text-[#8D6E63]"
+        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
+        defaultTitle="9 sistemas prontos para personalizar e revender" defaultSubtitle="Só R$ 19,90 • 7 dias de garantia"
+      />
 
-      <Link href={config?.siteGenUrl || "/projetos/sitegenclone"} onClick={() => handleTrack("ViewContent", "SiteGenClone", config?.siteGenUrl || "/projetos/sitegenclone")} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#E91E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-        <div className="bg-[#E91E63]/10 p-2 rounded-xl group-hover:bg-[#E91E63]/20 transition-colors"><Copy className="w-5 h-5 text-[#E91E63]" /></div>
-        <div>
-          <h3 className="font-bold text-text text-sm">{fixedLinks.siteGenClone?.title || "SiteGenClone"}</h3>
-          <p className="text-[10px] text-text-muted">{fixedLinks.siteGenClone?.subtitle || "Clonador de sites para projetos autorizados"}</p>
-        </div>
-      </Link>
+      <FixedButton 
+        id="siteGenClone" href={config?.siteGenUrl || "/projetos/sitegenclone"} onClick={() => handleTrack("ViewContent", "SiteGenClone", config?.siteGenUrl || "/projetos/sitegenclone")} fixedLinks={fixedLinks}
+        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#E91E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
+        iconWrapperClassName="bg-[#E91E63]/10 p-2 rounded-xl group-hover:bg-[#E91E63]/20 transition-colors" icon={Copy} iconClassName="w-5 h-5 text-[#E91E63]"
+        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
+        defaultTitle="SiteGenClone" defaultSubtitle="Clonador de sites para projetos autorizados"
+      />
 
-      <Link href={config?.githubUrl || "/biblioteca"} onClick={() => handleTrack("ViewContent", "GitHub", config?.githubUrl || "/biblioteca")} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#9E9E9E] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-        <div className="bg-[#9E9E9E]/10 p-2 rounded-xl group-hover:bg-[#9E9E9E]/20 transition-colors"><Code className="w-5 h-5 text-[#9E9E9E]" /></div>
-        <div>
-          <h3 className="font-bold text-text text-sm">{fixedLinks.github?.title || "Repositórios GitHub Premium Free"}</h3>
-          <p className="text-[10px] text-text-muted">{fixedLinks.github?.subtitle || "Recursos gratuitos organizados por categoria"}</p>
-        </div>
-      </Link>
+      <FixedButton 
+        id="github" href={config?.githubUrl || "/biblioteca"} onClick={() => handleTrack("ViewContent", "GitHub", config?.githubUrl || "/biblioteca")} fixedLinks={fixedLinks}
+        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#9E9E9E] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
+        iconWrapperClassName="bg-[#9E9E9E]/10 p-2 rounded-xl group-hover:bg-[#9E9E9E]/20 transition-colors" icon={Code} iconClassName="w-5 h-5 text-[#9E9E9E]"
+        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
+        defaultTitle="Repositórios GitHub Premium Free" defaultSubtitle="Recursos gratuitos organizados por categoria"
+      />
 
-      <Link href={config?.projetosUrl || "/projetos"} onClick={() => handleTrack("ViewContent", "Projetos", config?.projetosUrl || "/projetos")} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#4CAF50] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-        <div className="bg-[#4CAF50]/10 p-2 rounded-xl group-hover:bg-[#4CAF50]/20 transition-colors"><FolderOpen className="w-5 h-5 text-[#4CAF50]" /></div>
-        <div>
-          <h3 className="font-bold text-text text-sm">{fixedLinks.projetos?.title || "Ver projetos desenvolvidos"}</h3>
-          <p className="text-[10px] text-text-muted">{fixedLinks.projetos?.subtitle || "Sistemas, produtos e projetos em evolução"}</p>
-        </div>
-      </Link>
+      <FixedButton 
+        id="projetos" href={config?.projetosUrl || "/projetos"} onClick={() => handleTrack("ViewContent", "Projetos", config?.projetosUrl || "/projetos")} fixedLinks={fixedLinks}
+        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#4CAF50] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
+        iconWrapperClassName="bg-[#4CAF50]/10 p-2 rounded-xl group-hover:bg-[#4CAF50]/20 transition-colors" icon={FolderOpen} iconClassName="w-5 h-5 text-[#4CAF50]"
+        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
+        defaultTitle="Ver projetos desenvolvidos" defaultSubtitle="Sistemas, produtos e projetos em evolução"
+      />
 
-      <Link href={config?.dicasUrl || "/biblioteca"} onClick={() => handleTrack("ViewContent", "Dicas", config?.dicasUrl || "/biblioteca")} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#2196F3] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-        <div className="bg-[#2196F3]/10 p-2 rounded-xl group-hover:bg-[#2196F3]/20 transition-colors"><Diamond className="w-5 h-5 text-[#2196F3]" /></div>
-        <div>
-          <h3 className="font-bold text-text text-sm">{fixedLinks.dicas?.title || "Dicas grátis de IA, automações e ferramentas"}</h3>
-          <p className="text-[10px] text-text-muted">{fixedLinks.dicas?.subtitle || "Aprenda com conteúdos práticos e links úteis"}</p>
-        </div>
-      </Link>
+      <FixedButton 
+        id="dicas" href={config?.dicasUrl || "/biblioteca"} onClick={() => handleTrack("ViewContent", "Dicas", config?.dicasUrl || "/biblioteca")} fixedLinks={fixedLinks}
+        wrapperClassName="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#2196F3] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group"
+        iconWrapperClassName="bg-[#2196F3]/10 p-2 rounded-xl group-hover:bg-[#2196F3]/20 transition-colors" icon={Diamond} iconClassName="w-5 h-5 text-[#2196F3]"
+        titleClassName="font-bold text-text text-sm" subtitleClassName="text-[10px] text-text-muted"
+        defaultTitle="Dicas grátis de IA, automações e ferramentas" defaultSubtitle="Aprenda com conteúdos práticos e links úteis"
+      />
       
     </div>
   );
