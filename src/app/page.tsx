@@ -149,7 +149,7 @@ export default async function Home() {
             </Link>
           ))}
 
-          <Link href="/orcamento" className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-gold rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
+          <Link href={config?.orcamentoUrl || "/orcamento"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-gold rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
             <div className="bg-gold/10 p-2 rounded-xl group-hover:bg-gold/20 transition-colors"><Laptop className="w-5 h-5 text-gold" /></div>
             <div>
               <h3 className="font-bold text-text text-sm">{fixedLinks.orcamento?.title || "Orçamento para desenvolvimento de sistemas"}</h3>
@@ -165,7 +165,7 @@ export default async function Home() {
             </div>
           </a>
 
-          <Link href="/sistemas" className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#8D6E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
+          <Link href={config?.sistemasUrl || "/sistemas"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#8D6E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
             <div className="bg-[#8D6E63]/10 p-2 rounded-xl group-hover:bg-[#8D6E63]/20 transition-colors"><Briefcase className="w-5 h-5 text-[#8D6E63]" /></div>
             <div>
               <h3 className="font-bold text-text text-sm">{fixedLinks.sistemas?.title || "9 sistemas prontos para personalizar e revender"}</h3>
@@ -173,7 +173,7 @@ export default async function Home() {
             </div>
           </Link>
 
-          <Link href="/projetos/sitegenclone" className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#E91E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
+          <Link href={config?.siteGenUrl || "/projetos/sitegenclone"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#E91E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
             <div className="bg-[#E91E63]/10 p-2 rounded-xl group-hover:bg-[#E91E63]/20 transition-colors"><Copy className="w-5 h-5 text-[#E91E63]" /></div>
             <div>
               <h3 className="font-bold text-text text-sm">{fixedLinks.siteGenClone?.title || "SiteGenClone"}</h3>
@@ -181,7 +181,7 @@ export default async function Home() {
             </div>
           </Link>
 
-          <Link href="/biblioteca" className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#9E9E9E] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
+          <Link href={config?.githubUrl || "/biblioteca"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#9E9E9E] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
             <div className="bg-[#9E9E9E]/10 p-2 rounded-xl group-hover:bg-[#9E9E9E]/20 transition-colors"><Code className="w-5 h-5 text-[#9E9E9E]" /></div>
             <div>
               <h3 className="font-bold text-text text-sm">{fixedLinks.github?.title || "Repositórios GitHub Premium Free"}</h3>
@@ -189,7 +189,7 @@ export default async function Home() {
             </div>
           </Link>
 
-          <Link href="/projetos" className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#4CAF50] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
+          <Link href={config?.projetosUrl || "/projetos"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#4CAF50] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
             <div className="bg-[#4CAF50]/10 p-2 rounded-xl group-hover:bg-[#4CAF50]/20 transition-colors"><FolderOpen className="w-5 h-5 text-[#4CAF50]" /></div>
             <div>
               <h3 className="font-bold text-text text-sm">{fixedLinks.projetos?.title || "Ver projetos desenvolvidos"}</h3>
@@ -197,7 +197,7 @@ export default async function Home() {
             </div>
           </Link>
 
-          <Link href="/biblioteca" className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#2196F3] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
+          <Link href={config?.dicasUrl || "/biblioteca"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#2196F3] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
             <div className="bg-[#2196F3]/10 p-2 rounded-xl group-hover:bg-[#2196F3]/20 transition-colors"><Diamond className="w-5 h-5 text-[#2196F3]" /></div>
             <div>
               <h3 className="font-bold text-text text-sm">{fixedLinks.dicas?.title || "Dicas grátis de IA, automações e ferramentas"}</h3>
