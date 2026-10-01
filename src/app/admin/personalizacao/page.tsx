@@ -10,8 +10,8 @@ export default function PersonalizacaoPage() {
   const [saving, setSaving] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [characterFile, setCharacterFile] = useState<File | null>(null);
-  const [customLinks, setCustomLinks] = useState<{id: number, title: string, url: string, iconUrl?: string}[]>([]);
-  const [editingFixedLink, setEditingFixedLink] = useState<string | null>(null);
+  const [customLinks, setCustomLinks] = useState<any[]>([]);
+  const [editingLink, setEditingLink] = useState<string | number | null>(null);
 
   const DEFAULT_FIXED_LINKS = [
     { id: 'tiktok', defaultTitle: 'TikTok', defaultSubtitle: 'Conteúdo Rápido', urlField: 'tiktokUrl' },
@@ -40,7 +40,7 @@ export default function PersonalizacaoPage() {
     }));
   };
 
-  const updateFixedOrder = (newOrder: string[]) => {
+  const updateFixedOrder = (newOrder: (string | number)[]) => {
     setConfig((prev: any) => ({
       ...prev,
       fixedLinksConfig: {
@@ -48,6 +48,10 @@ export default function PersonalizacaoPage() {
         order: newOrder
       }
     }));
+  };
+
+  const updateCustomLink = (id: number, field: string, value: any) => {
+    setCustomLinks((prev) => prev.map(link => link.id === id ? { ...link, [field]: value } : link));
   };
 
   useEffect(() => {
@@ -187,33 +191,59 @@ export default function PersonalizacaoPage() {
           </div>
 
           <div className="bg-surface border border-primary/20 rounded-2xl p-6 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-            <h3 className="text-xl font-bold text-text mb-4">Links dos Botões</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-text">Todos os Botões</h3>
+              <Button type="button" variant="outline" size="sm" onClick={() => {
+                const newId = Date.now();
+                setCustomLinks([...customLinks, { id: newId, title: 'Novo Botão', url: '' }]);
+                const currentOrder = config.fixedLinksConfig?.order || DEFAULT_FIXED_LINKS.map(l => l.id);
+                updateFixedOrder([newId, ...currentOrder]); // Adiciona no topo por padrao
+              }} className="text-xs py-1 h-auto bg-primary/10 border-primary/30 text-primary hover:bg-primary/20">
+                + Adicionar Botão
+              </Button>
+            </div>
             
             <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
               
               <div className="space-y-3">
-                <h4 className="font-bold text-text mb-2 border-b border-primary/20 pb-2">Botões Padrões (Visíveis na Home)</h4>
                 {(() => {
                   const defaultOrder = DEFAULT_FIXED_LINKS.map(l => l.id);
                   const currentOrder = config.fixedLinksConfig?.order || defaultOrder;
-                  const orderedLinks = [...DEFAULT_FIXED_LINKS].sort((a, b) => {
-                    const idxA = currentOrder.indexOf(a.id);
-                    const idxB = currentOrder.indexOf(b.id);
-                    return (idxA !== -1 ? idxA : 99) - (idxB !== -1 ? idxB : 99);
+                  
+                  const allLinks = [
+                    ...DEFAULT_FIXED_LINKS.map(l => ({ ...l, type: 'fixed' as const })),
+                    ...customLinks.map(l => ({ ...l, type: 'custom' as const }))
+                  ];
+
+                  const orderedLinks = allLinks.sort((a, b) => {
+                    let idxA = currentOrder.indexOf(a.id);
+                    let idxB = currentOrder.indexOf(b.id);
+                    if (idxA === -1) idxA = 999;
+                    if (idxB === -1) idxB = 999;
+                    return idxA - idxB;
                   });
 
-                  return orderedLinks.map((link, index) => {
-                    const isEditing = editingFixedLink === link.id;
-                    const currentTitle = config.fixedLinksConfig?.[link.id]?.title || link.defaultTitle;
-                    const currentSubtitle = config.fixedLinksConfig?.[link.id]?.subtitle || link.defaultSubtitle;
-                    const currentUrl = config[link.urlField] || '';
+                  return orderedLinks.map((link: any, index: number) => {
+                    const isEditing = editingLink === link.id;
+                    const isFixed = link.type === 'fixed';
+                    
+                    const currentTitle = isFixed 
+                      ? (config.fixedLinksConfig?.[link.id]?.title || link.defaultTitle)
+                      : link.title;
+                    const currentSubtitle = isFixed 
+                      ? (config.fixedLinksConfig?.[link.id]?.subtitle || link.defaultSubtitle)
+                      : (link.subtitle || '');
+                    const currentUrl = isFixed ? (config[link.urlField] || '') : link.url;
+                    const currentVisible = isFixed ? (config.fixedLinksConfig?.[link.id]?.visible !== false) : (link.visible !== false);
+                    const currentBannerUrl = isFixed ? config.fixedLinksConfig?.[link.id]?.bannerUrl : link.bannerUrl;
+                    const currentFrase = isFixed ? config.fixedLinksConfig?.[link.id]?.fraseDestaque : link.fraseDestaque;
 
                     return (
                       <div key={link.id} className="bg-background border border-primary/20 p-3 rounded-xl flex gap-2">
                         <div className="flex flex-col gap-1 items-center justify-center border-r border-primary/20 pr-2">
                           <button onClick={() => {
                             if (index > 0) {
-                              const newOrder = [...currentOrder];
+                              const newOrder = orderedLinks.map(l => l.id);
                               [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
                               updateFixedOrder(newOrder);
                             }
@@ -222,7 +252,7 @@ export default function PersonalizacaoPage() {
                           </button>
                           <button onClick={() => {
                             if (index < orderedLinks.length - 1) {
-                              const newOrder = [...currentOrder];
+                              const newOrder = orderedLinks.map(l => l.id);
                               [newOrder[index + 1], newOrder[index]] = [newOrder[index], newOrder[index + 1]];
                               updateFixedOrder(newOrder);
                             }
@@ -232,162 +262,136 @@ export default function PersonalizacaoPage() {
                         </div>
                         <div className="flex-1">
                           {isEditing ? (
-                        <div className="space-y-3">
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-xs font-bold text-primary">Editando: {link.defaultTitle}</span>
-                            <div className="flex gap-2">
-                              <button onClick={() => setEditingFixedLink(null)} className="text-text-muted hover:text-white p-1 bg-surface rounded"><Save className="w-4 h-4" /></button>
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-[10px] text-text-muted uppercase">Título</label>
-                            <input type="text" value={currentTitle} onChange={e => updateFixedLink(link.id, 'title', e.target.value)} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
-                          </div>
-                          <div>
-                            <label className="text-[10px] text-text-muted uppercase">Subtítulo</label>
-                            <input type="text" value={currentSubtitle} onChange={e => updateFixedLink(link.id, 'subtitle', e.target.value)} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
-                          </div>
-                          <div>
-                            <label className="text-[10px] text-text-muted uppercase">URL de Destino</label>
-                            <input type="url" value={currentUrl} onChange={e => setConfig({...config, [link.urlField]: e.target.value})} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
-                          </div>
-                          <div>
-                            <label className="text-[10px] text-text-muted uppercase mb-1 block">Banner do Botão (Imagem)</label>
-                            <div className="flex gap-2">
-                              <input 
-                                type="file" 
-                                accept="image/*,video/mp4"
-                                onChange={async (e) => {
-                                  if (e.target.files?.[0]) {
-                                    const url = await handleUpload(e.target.files[0], `banner_${link.id}`);
-                                    if (url) updateFixedLink(link.id, 'bannerUrl', url);
-                                  }
-                                }}
-                                className="hidden" 
-                                id={`banner-${link.id}`} 
-                              />
-                              <label htmlFor={`banner-${link.id}`} className="flex-1 bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs cursor-pointer flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors">
-                                <ImageIcon className="w-4 h-4" /> Upload Imagem
-                              </label>
-                              {config.fixedLinksConfig?.[link.id]?.bannerUrl && (
-                                <button onClick={() => updateFixedLink(link.id, 'bannerUrl', null)} className="px-3 py-2 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg hover:bg-red-500/20">
-                                  <X className="w-4 h-4" />
-                                </button>
+                            <div className="space-y-3">
+                              <div className="flex justify-between items-center mb-2">
+                                <span className="text-xs font-bold text-primary">Editando: {link.defaultTitle || 'Botão Personalizado'}</span>
+                                <div className="flex gap-2">
+                                  {!isFixed && (
+                                    <button onClick={() => {
+                                      setCustomLinks(customLinks.filter(l => l.id !== link.id));
+                                    }} className="text-red-500 hover:text-white p-1 bg-red-500/10 hover:bg-red-500 rounded text-xs px-2">Excluir</button>
+                                  )}
+                                  <button onClick={() => setEditingLink(null)} className="text-text-muted hover:text-white p-1 bg-surface rounded"><Save className="w-4 h-4" /></button>
+                                </div>
+                              </div>
+                              
+                              {!isFixed && (
+                                <div className="flex gap-4 items-center">
+                                  {link.iconUrl ? (
+                                    <img src={link.iconUrl} className="w-10 h-10 rounded-xl object-cover border border-primary/20" />
+                                  ) : (
+                                    <div className="w-10 h-10 rounded-xl bg-surface/50 border border-primary/20 flex items-center justify-center text-[8px] text-text-muted">Ícone</div>
+                                  )}
+                                  <label className="cursor-pointer text-xs text-primary hover:underline">
+                                    Subir Ícone
+                                    <input type="file" accept="image/*,video/mp4" className="hidden" onChange={async e => {
+                                      if (e.target.files?.[0]) {
+                                        const url = await handleUpload(e.target.files[0], 'btn-icon');
+                                        updateCustomLink(link.id, 'iconUrl', url);
+                                      }
+                                    }} />
+                                  </label>
+                                </div>
                               )}
-                            </div>
-                            {config.fixedLinksConfig?.[link.id]?.bannerUrl && (
-                              <img src={config.fixedLinksConfig[link.id].bannerUrl} alt="Banner" className="mt-2 w-full h-12 object-cover rounded-md border border-primary/20" />
-                            )}
-                          </div>
-                          <div>
-                            <label className="text-[10px] text-text-muted uppercase mb-1 block">Frase de Destaque (Abaixo do Banner)</label>
-                            <input type="text" value={config.fixedLinksConfig?.[link.id]?.fraseDestaque || ''} onChange={e => updateFixedLink(link.id, 'fraseDestaque', e.target.value)} placeholder="Ex: ÚLTIMAS VAGAS DISPONÍVEIS!" className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex justify-between items-center group">
-                          <div>
-                            <h5 className="text-sm font-bold text-text group-hover:text-primary transition-colors flex items-center gap-2">
-                              {currentTitle}
-                              {config.fixedLinksConfig?.[link.id]?.visible === false && (
-                                <span className="px-1.5 py-0.5 rounded text-[8px] bg-red-500/20 text-red-400 font-normal">Oculto</span>
-                              )}
-                              {config.fixedLinksConfig?.[link.id]?.bannerUrl && (
-                                <span className="px-1.5 py-0.5 rounded text-[8px] bg-primary/20 text-primary font-normal flex items-center gap-1"><ImageIcon className="w-3 h-3" /> Banner</span>
-                              )}
-                            </h5>
-                            <p className="text-[10px] text-text-muted truncate max-w-[200px]">{currentSubtitle}</p>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <button 
-                              onClick={() => {
-                                const currentVisible = config.fixedLinksConfig?.[link.id]?.visible !== false;
-                                updateFixedLink(link.id, 'visible', !currentVisible);
-                              }} 
-                              className={`p-2 bg-surface hover:bg-primary/20 rounded-lg transition-colors border border-primary/20 ${config.fixedLinksConfig?.[link.id]?.visible === false ? 'text-red-400' : 'text-primary'}`}
-                              title={config.fixedLinksConfig?.[link.id]?.visible === false ? 'Mostrar Botão' : 'Ocultar Botão'}
-                            >
-                              {config.fixedLinksConfig?.[link.id]?.visible === false ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            </button>
-                            <button onClick={() => setEditingFixedLink(link.id)} className="p-2 bg-surface hover:bg-primary/20 rounded-lg text-text-muted hover:text-primary transition-colors border border-primary/20">
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              });
-            })()}
-              </div>
 
-              <div className="pt-6 mt-6 border-t border-primary/20">
-                <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-bold text-text">Botões Personalizados</h4>
-                  <div className="flex gap-2">
-                    <Button type="button" variant="outline" size="sm" onClick={() => setCustomLinks([...customLinks, { id: Date.now(), title: '', url: '', iconUrl: '' }])} className="text-xs py-1 h-auto bg-primary/10 border-primary/30 text-primary hover:bg-primary/20">
-                      + Adicionar Botão
-                    </Button>
-                    <Button type="button" size="sm" onClick={handleSave} disabled={saving} className="text-xs py-1 h-auto bg-primary text-background hover:bg-primary/90 font-bold flex gap-1 items-center">
-                      <Save className="w-3 h-3" /> Salvar
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  {customLinks.map((link, index) => (
-                    <div key={link.id} className="flex gap-4 items-start bg-background p-4 rounded-xl border border-primary/20 relative">
-                      <div className="flex flex-col gap-2 items-center">
-                        {link.iconUrl ? (
-                          link.iconUrl.endsWith('.mp4') ? (
-                            <video src={link.iconUrl} autoPlay loop muted playsInline className="w-12 h-12 rounded-xl object-cover bg-surface border border-primary/20" />
+                              <div>
+                                <label className="text-[10px] text-text-muted uppercase">Título</label>
+                                <input type="text" value={currentTitle} onChange={e => {
+                                  if (isFixed) updateFixedLink(link.id, 'title', e.target.value);
+                                  else updateCustomLink(link.id, 'title', e.target.value);
+                                }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
+                              </div>
+                              <div>
+                                <label className="text-[10px] text-text-muted uppercase">Subtítulo</label>
+                                <input type="text" value={currentSubtitle} onChange={e => {
+                                  if (isFixed) updateFixedLink(link.id, 'subtitle', e.target.value);
+                                  else updateCustomLink(link.id, 'subtitle', e.target.value);
+                                }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
+                              </div>
+                              <div>
+                                <label className="text-[10px] text-text-muted uppercase">URL de Destino</label>
+                                <input type="url" value={currentUrl} onChange={e => {
+                                  if (isFixed) setConfig({...config, [link.urlField]: e.target.value});
+                                  else updateCustomLink(link.id, 'url', e.target.value);
+                                }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
+                              </div>
+                              <div>
+                                <label className="text-[10px] text-text-muted uppercase mb-1 block">Banner do Botão (Imagem)</label>
+                                <div className="flex gap-2">
+                                  <input 
+                                    type="file" accept="image/*,video/mp4" className="hidden" id={`banner-${link.id}`}
+                                    onChange={async (e) => {
+                                      if (e.target.files?.[0]) {
+                                        const url = await handleUpload(e.target.files[0], `banner_${link.id}`);
+                                        if (isFixed) updateFixedLink(link.id, 'bannerUrl', url);
+                                        else updateCustomLink(link.id, 'bannerUrl', url);
+                                      }
+                                    }}
+                                  />
+                                  <label htmlFor={`banner-${link.id}`} className="flex-1 bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs cursor-pointer flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors">
+                                    <ImageIcon className="w-4 h-4" /> Upload Banner
+                                  </label>
+                                  {currentBannerUrl && (
+                                    <button onClick={() => {
+                                      if (isFixed) updateFixedLink(link.id, 'bannerUrl', null);
+                                      else updateCustomLink(link.id, 'bannerUrl', null);
+                                    }} className="px-3 py-2 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg hover:bg-red-500/20">
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  )}
+                                </div>
+                                {currentBannerUrl && (
+                                  <img src={currentBannerUrl} alt="Banner" className="mt-2 w-full h-12 object-cover rounded-md border border-primary/20" />
+                                )}
+                              </div>
+                              <div>
+                                <label className="text-[10px] text-text-muted uppercase mb-1 block">Frase de Destaque (Abaixo do Banner)</label>
+                                <input type="text" value={currentFrase || ''} onChange={e => {
+                                  if (isFixed) updateFixedLink(link.id, 'fraseDestaque', e.target.value);
+                                  else updateCustomLink(link.id, 'fraseDestaque', e.target.value);
+                                }} placeholder="Ex: ÚLTIMAS VAGAS DISPONÍVEIS!" className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
+                              </div>
+                            </div>
                           ) : (
-                            <img src={link.iconUrl} className="w-12 h-12 rounded-xl object-cover bg-surface border border-primary/20" />
-                          )
-                        ) : (
-                          <div className="w-12 h-12 rounded-xl bg-surface/50 border border-primary/20 flex items-center justify-center text-[10px] text-text-muted text-center leading-tight p-1">Sem Ícone</div>
-                        )}
-                        <label className="cursor-pointer text-[10px] text-primary hover:underline font-bold text-center">
-                          Subir GIF/MP4
-                          <input type="file" accept="image/*,video/mp4" className="hidden" onChange={async e => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              try {
-                                const url = await handleUpload(file, 'btn-icon');
-                                const newLinks = [...customLinks];
-                                newLinks[index].iconUrl = url;
-                                setCustomLinks(newLinks);
-                              } catch (err) {}
-                            }
-                          }} />
-                        </label>
+                            <div className="flex justify-between items-center group">
+                              <div>
+                                <h5 className="text-sm font-bold text-text group-hover:text-primary transition-colors flex items-center gap-2">
+                                  {currentTitle || 'Sem Título'}
+                                  {!isFixed && <span className="px-1.5 py-0.5 rounded text-[8px] bg-primary/20 text-primary font-normal">Personalizado</span>}
+                                  {!currentVisible && (
+                                    <span className="px-1.5 py-0.5 rounded text-[8px] bg-red-500/20 text-red-400 font-normal">Oculto</span>
+                                  )}
+                                  {currentBannerUrl && (
+                                    <span className="px-1.5 py-0.5 rounded text-[8px] bg-primary/20 text-primary font-normal flex items-center gap-1"><ImageIcon className="w-3 h-3" /> Banner</span>
+                                  )}
+                                </h5>
+                                <p className="text-[10px] text-text-muted truncate max-w-[200px]">{currentSubtitle}</p>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <button 
+                                  onClick={() => {
+                                    if (isFixed) updateFixedLink(link.id, 'visible', !currentVisible);
+                                    else updateCustomLink(link.id, 'visible', !currentVisible);
+                                  }} 
+                                  className={`p-2 bg-surface hover:bg-primary/20 rounded-lg transition-colors border border-primary/20 ${!currentVisible ? 'text-red-400' : 'text-primary'}`}
+                                  title={!currentVisible ? 'Mostrar Botão' : 'Ocultar Botão'}
+                                >
+                                  {!currentVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                                <button onClick={() => setEditingLink(link.id)} className="p-2 bg-surface hover:bg-primary/20 rounded-lg text-text-muted hover:text-primary transition-colors border border-primary/20">
+                                  <Pencil className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
-
-                      <div className="flex-1 space-y-3">
-                        <input type="text" value={link.title} onChange={e => {
-                          const newLinks = [...customLinks];
-                          newLinks[index].title = e.target.value;
-                          setCustomLinks(newLinks);
-                        }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-sm outline-none focus:border-primary" placeholder="Título do botão (Ex: Meu Canal, Meu Curso)" />
-                        <input type="url" value={link.url} onChange={e => {
-                          const newLinks = [...customLinks];
-                          newLinks[index].url = e.target.value;
-                          setCustomLinks(newLinks);
-                        }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-sm outline-none focus:border-primary" placeholder="URL (https://...)" />
-                      </div>
-                      <button type="button" onClick={() => setCustomLinks(customLinks.filter(l => l.id !== link.id))} className="text-red-500 hover:text-red-400 text-xs font-bold bg-red-500/10 px-3 py-2 rounded-lg hover:bg-red-500/20 transition-colors self-start mt-1">
-                        Remover
-                      </button>
-                    </div>
-                  ))}
-                  {customLinks.length === 0 && <div className="text-center text-sm text-text-muted py-4 italic">Nenhum botão personalizado adicionado.</div>}
-                </div>
+                    );
+                  });
+                })()}
               </div>
-
             </div>
           </div>
-
 
           <div className="bg-surface border border-primary/20 rounded-2xl p-6 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
             <h3 className="text-xl font-bold text-text mb-4">SEO e Compartilhamento</h3>

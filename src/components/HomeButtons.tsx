@@ -16,62 +16,90 @@ function SparklesIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-function FixedButton({ 
-  id, 
-  href, 
-  onClick, 
-  fixedLinks, 
-  wrapperClassName, 
-  iconWrapperClassName, 
-  icon: Icon, 
-  iconClassName, 
-  titleClassName, 
-  subtitleClassName, 
-  defaultTitle, 
-  defaultSubtitle, 
-  isExternal 
-}: any) {
-  if (fixedLinks[id]?.visible === false) return null;
-
-  const content = fixedLinks[id]?.bannerUrl ? (
+function BannerButton({ href, isExternal, onClick, bannerUrl, fraseDestaque, title }: any) {
+  const content = (
     <div className="flex flex-col gap-2 hover:scale-[1.02] transition-transform group">
-      <img src={fixedLinks[id].bannerUrl} alt={fixedLinks[id]?.title || defaultTitle} className="w-full h-auto rounded-2xl object-cover shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
-      {fixedLinks[id]?.fraseDestaque && (
+      <img src={bannerUrl} alt={title} className="w-full h-auto rounded-2xl object-cover shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
+      {fraseDestaque && (
         <div className="bg-gradient-to-r from-primary/90 to-primary text-background font-black text-center py-2.5 px-4 rounded-xl text-xs md:text-sm shadow-[0_0_20px_rgba(245,138,31,0.5)] border border-white/30 uppercase tracking-wider relative overflow-hidden group-hover:shadow-[0_0_30px_rgba(245,138,31,0.8)] transition-shadow">
           <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
-          {fixedLinks[id].fraseDestaque}
+          {fraseDestaque}
         </div>
       )}
     </div>
+  );
+
+  return isExternal ? (
+    <a href={href} target="_blank" onClick={onClick} className="block w-full">{content}</a>
   ) : (
+    <Link href={href} onClick={onClick} className="block w-full">{content}</Link>
+  );
+}
+
+function FixedButton({ id, href, onClick, fixedLinks, wrapperClassName, iconWrapperClassName, icon: Icon, iconClassName, titleClassName, subtitleClassName, defaultTitle, defaultSubtitle, isExternal }: any) {
+  const linkData = fixedLinks[id];
+  if (linkData?.visible === false) return null;
+
+  const bannerUrl = linkData?.bannerUrl;
+  const fraseDestaque = linkData?.fraseDestaque;
+  const title = linkData?.title || defaultTitle;
+
+  if (bannerUrl) {
+    return <BannerButton href={href} isExternal={isExternal} onClick={onClick} bannerUrl={bannerUrl} fraseDestaque={fraseDestaque} title={title} />;
+  }
+
+  const content = (
     <div className={wrapperClassName}>
       <div className={iconWrapperClassName}><Icon className={iconClassName} /></div>
       <div>
-        <h3 className={titleClassName}>{fixedLinks[id]?.title || defaultTitle}</h3>
-        <p className={subtitleClassName}>{fixedLinks[id]?.subtitle || defaultSubtitle}</p>
+        <h3 className={titleClassName}>{title}</h3>
+        <p className={subtitleClassName}>{linkData?.subtitle || defaultSubtitle}</p>
       </div>
     </div>
   );
 
   return isExternal ? (
-    <a href={href} target="_blank" onClick={onClick} className="block w-full">
-      {content}
-    </a>
+    <a href={href} target="_blank" onClick={onClick} className="block w-full">{content}</a>
   ) : (
-    <Link href={href} onClick={onClick} className="block w-full">
-      {content}
-    </Link>
+    <Link href={href} onClick={onClick} className="block w-full">{content}</Link>
   );
 }
 
-export function HomeButtons({ config, fixedLinks }: { config: any, fixedLinks: any }) {
-  
+function CustomLinkButton({ link, onClick }: { link: any; onClick: () => void }) {
+  if (link.visible === false) return null;
+
+  const bannerUrl = link.bannerUrl;
+  const fraseDestaque = link.fraseDestaque;
+
+  if (bannerUrl) {
+    return <BannerButton href={link.url} isExternal onClick={onClick} bannerUrl={bannerUrl} fraseDestaque={fraseDestaque} title={link.title} />;
+  }
+
+  return (
+    <a href={link.url} target="_blank" onClick={onClick} className="bg-surface/40 hover:bg-surface/80 border border-primary/20 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform group">
+      {link.iconUrl ? (
+        link.iconUrl.endsWith('.mp4') ? (
+          <video src={link.iconUrl} autoPlay loop muted playsInline className="w-9 h-9 object-cover rounded-xl" />
+        ) : (
+          <img src={link.iconUrl} alt={link.title} className="w-9 h-9 object-cover rounded-xl" />
+        )
+      ) : (
+        <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-colors"><LinkIcon className="w-5 h-5 text-primary" /></div>
+      )}
+      <div>
+        <h3 className="font-bold text-text group-hover:text-primary transition-colors text-sm">{link.title}</h3>
+        <p className="text-[10px] text-text-muted">{link.subtitle || 'Acessar link'}</p>
+      </div>
+    </a>
+  );
+}
+
+export function HomeButtons({ config, fixedLinks }: { config: any; fixedLinks: any }) {
   const handleTrack = (eventName: string, alvo: string, url: string) => {
     trackEvent(eventName, { alvo, tipo: "botao", pagina: "home" });
   };
 
-  const defaultOrder = ['tiktok', 'instagram', 'whatsapp', 'youtube', 'orcamento', 'siteOficial', 'sistemas', 'siteGenClone', 'github', 'projetos', 'dicas'];
-  const currentOrder = fixedLinks?.order || defaultOrder;
+  const FIXED_IDS = ['tiktok', 'instagram', 'whatsapp', 'youtube', 'orcamento', 'siteOficial', 'sistemas', 'siteGenClone', 'github', 'projetos', 'dicas'];
 
   const BUTTON_CONFIGS: Record<string, any> = {
     tiktok: {
@@ -154,31 +182,39 @@ export function HomeButtons({ config, fixedLinks }: { config: any, fixedLinks: a
     }
   };
 
-  const orderedLinks = [...defaultOrder].sort((a, b) => {
-    const idxA = currentOrder.indexOf(a);
-    const idxB = currentOrder.indexOf(b);
-    return (idxA !== -1 ? idxA : 99) - (idxB !== -1 ? idxB : 99);
-  });
+  const customLinks: any[] = Array.isArray(config?.customLinks) ? config.customLinks : [];
+  const currentOrder: (string | number)[] = fixedLinks?.order || FIXED_IDS;
+
+  // Build a unified ordered list
+  const allIds = [
+    ...FIXED_IDS,
+    ...customLinks.map((l: any) => l.id)
+  ];
+
+  const orderedIds = [
+    ...currentOrder.filter(id => allIds.includes(id as any)),
+    ...allIds.filter(id => !currentOrder.includes(id as any))
+  ];
 
   return (
     <div className="w-full flex flex-col gap-3 pb-20">
-      
+
       {/* Caixa de Pesquisa */}
-      <div 
+      <div
         onClick={() => handleTrack("Search", "Pesquisa Home", "/biblioteca")}
         className="bg-surface/80 backdrop-blur-md rounded-3xl p-3 flex items-start border border-primary/30 shadow-[0_0_25px_rgba(0,0,0,0.5)] mb-8 transition-all hover:border-primary/50 hover:shadow-[0_0_30px_rgba(245,138,31,0.15)] cursor-pointer"
       >
         <div className="bg-[#004d40] w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(0,77,64,0.6)]">
-           <Search className="w-5 h-5 text-[#00e676]" />
+          <Search className="w-5 h-5 text-[#00e676]" />
         </div>
         <div className="ml-4 flex-1 pr-2">
           <h3 className="font-bold text-text text-sm">{fixedLinks.searchBox?.title || "Pesquise no Conecta FFR"}</h3>
           <p className="text-[10px] text-text-muted mt-0.5">{fixedLinks.searchBox?.subtitle || "Encontre materiais, repositórios, sistemas, projetos e links."}</p>
           <div className="block w-full">
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder={fixedLinks.searchBox?.placeholder || "Pesquise por IA, agentes, SaaS, imagens..."}
-              className="w-full mt-3 bg-background border border-primary/20 rounded-xl px-4 py-2.5 text-xs text-text outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner cursor-pointer pointer-events-none" 
+              className="w-full mt-3 bg-background border border-primary/20 rounded-xl px-4 py-2.5 text-xs text-text outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner cursor-pointer pointer-events-none"
               readOnly
             />
           </div>
@@ -194,38 +230,34 @@ export function HomeButtons({ config, fixedLinks }: { config: any, fixedLinks: a
         </div>
       </div>
 
-      {orderedLinks.map((id) => {
-        const btnConfig = BUTTON_CONFIGS[id];
-        if (btnConfig.condition && !btnConfig.condition()) return null;
-        
+      {orderedIds.map((id) => {
+        // Fixed button
+        if (typeof id === 'string' && FIXED_IDS.includes(id)) {
+          const btnConfig = BUTTON_CONFIGS[id];
+          if (!btnConfig) return null;
+          if (btnConfig.condition && !btnConfig.condition()) return null;
+          return (
+            <FixedButton
+              key={id}
+              id={id}
+              fixedLinks={fixedLinks}
+              {...btnConfig}
+            />
+          );
+        }
+
+        // Custom link button
+        const customLink = customLinks.find((l: any) => String(l.id) === String(id));
+        if (!customLink) return null;
         return (
-          <FixedButton 
-            key={id}
-            id={id}
-            fixedLinks={fixedLinks}
-            {...btnConfig}
+          <CustomLinkButton
+            key={customLink.id}
+            link={customLink}
+            onClick={() => handleTrack("Lead", `Custom - ${customLink.title}`, customLink.url)}
           />
         );
       })}
 
-      {Array.isArray(config?.customLinks) && config.customLinks.map((link: any) => (
-        <a key={link.id} href={link.url} target="_blank" onClick={() => handleTrack("Lead", `Custom Link - ${link.title}`, link.url)} className="bg-surface/40 hover:bg-surface/80 border border-primary/20 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform group mt-4">
-          {link.iconUrl ? (
-            link.iconUrl.endsWith('.mp4') ? (
-              <video src={link.iconUrl} autoPlay loop muted playsInline className="w-9 h-9 object-cover rounded-xl" />
-            ) : (
-              <img src={link.iconUrl} alt={link.title} className="w-9 h-9 object-cover rounded-xl" />
-            )
-          ) : (
-            <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-colors"><LinkIcon className="w-5 h-5 text-primary" /></div>
-          )}
-          <div>
-            <h3 className="font-bold text-text group-hover:text-primary transition-colors text-sm">{link.title}</h3>
-            <p className="text-[10px] text-text-muted">Acessar link</p>
-          </div>
-        </a>
-      ))}
-      
     </div>
   );
 }
