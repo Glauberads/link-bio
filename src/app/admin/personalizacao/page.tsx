@@ -310,10 +310,12 @@ export default function PersonalizacaoPage() {
                             </button>
                           </div>
                         </div>
-                      </div>
-                    );
-                  });
-                })}
+                      )}
+                    </div>
+                  </div>
+                );
+              });
+            })()}
               </div>
 
               <div className="pt-6 mt-6 border-t border-primary/20">
