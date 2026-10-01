@@ -46,25 +46,7 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Caixa de Pesquisa (Estilo Original) */}
-        <div className="bg-surface/80 backdrop-blur-md rounded-3xl p-3 flex items-start border border-primary/30 shadow-[0_0_25px_rgba(0,0,0,0.5)] mb-8 transition-all hover:border-primary/50 hover:shadow-[0_0_30px_rgba(245,138,31,0.15)]">
-          <div className="bg-[#004d40] w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(0,77,64,0.6)]">
-             <Search className="w-5 h-5 text-[#00e676]" />
-          </div>
-          <div className="ml-4 flex-1 pr-2">
-            <h3 className="font-bold text-text text-sm">{fixedLinks.searchBox?.title || "Pesquise no Conecta FFR"}</h3>
-            <p className="text-[10px] text-text-muted mt-0.5">{fixedLinks.searchBox?.subtitle || "Encontre materiais, repositórios, sistemas, projetos e links."}</p>
-            <Link href="/biblioteca">
-              <input 
-                type="text" 
-                placeholder={fixedLinks.searchBox?.placeholder || "Pesquise por IA, agentes, SaaS, imagens..."}
-                className="w-full mt-3 bg-background border border-primary/20 rounded-xl px-4 py-2.5 text-xs text-text outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner cursor-pointer" 
-                readOnly
-              />
-            </Link>
-            <p className="text-[9px] text-text-muted mt-2">{fixedLinks.searchBox?.footer || "Digite para pesquisar em todo o site."}</p>
-          </div>
-        </div>
+
 
         {/* Personagem (Visível apenas no Mobile) */}
         <div className="flex lg:hidden w-full justify-center mb-8 relative">
