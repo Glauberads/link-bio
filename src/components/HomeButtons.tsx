@@ -230,13 +230,14 @@ export function HomeButtons({ config, fixedLinks }: { config: any; fixedLinks: a
         </div>
       </div>
 
-      {orderedIds.map((id) => {
-        // Fixed button
+      {orderedIds.reduce<React.ReactNode[]>((acc, id, index) => {
+        let node: React.ReactNode = null;
+
         if (typeof id === 'string' && FIXED_IDS.includes(id)) {
           const btnConfig = BUTTON_CONFIGS[id];
-          if (!btnConfig) return null;
-          if (btnConfig.condition && !btnConfig.condition()) return null;
-          return (
+          if (!btnConfig) return acc;
+          if (btnConfig.condition && !btnConfig.condition()) return acc;
+          node = (
             <FixedButton
               key={id}
               id={id}
@@ -244,19 +245,28 @@ export function HomeButtons({ config, fixedLinks }: { config: any; fixedLinks: a
               {...btnConfig}
             />
           );
+        } else {
+          const customLink = customLinks.find((l: any) => String(l.id) === String(id));
+          if (!customLink) return acc;
+          node = (
+            <CustomLinkButton
+              key={customLink.id}
+              link={customLink}
+              onClick={() => handleTrack("Lead", `Custom - ${customLink.title}`, customLink.url)}
+            />
+          );
         }
 
-        // Custom link button
-        const customLink = customLinks.find((l: any) => String(l.id) === String(id));
-        if (!customLink) return null;
-        return (
-          <CustomLinkButton
-            key={customLink.id}
-            link={customLink}
-            onClick={() => handleTrack("Lead", `Custom - ${customLink.title}`, customLink.url)}
-          />
-        );
-      })}
+        if (acc.length > 0) {
+          acc.push(
+            <div key={`divider-${index}`} className="flex items-center gap-3 px-2">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+            </div>
+          );
+        }
+        acc.push(node);
+        return acc;
+      }, [])}
 
     </div>
   );
