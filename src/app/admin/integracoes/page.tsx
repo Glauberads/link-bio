@@ -130,7 +130,7 @@ export default function IntegracoesPage() {
 
       </div>
 
-      <div className="fixed bottom-0 left-64 right-0 p-4 bg-surface/80 backdrop-blur-md border-t border-primary/20 flex justify-end">
+      <div className="fixed bottom-0 left-0 md:left-64 right-0 p-4 bg-surface/80 backdrop-blur-md border-t border-primary/20 flex justify-end">
         <Button onClick={handleSave} disabled={saving} className="flex items-center gap-2 px-8">
           <Save className="w-5 h-5" />
           {saving ? 'Salvando...' : 'Salvar Integrações'}
