@@ -165,15 +165,21 @@ export default function IntegracoesPage() {
 
               <div>
                 <label className="text-xs text-text-muted uppercase tracking-wider mb-1 block">Modelo de Inteligência</label>
-                <select 
+                <input 
+                  type="text"
+                  list="gemini-models"
                   value={config.geminiModel || 'gemini-2.0-flash-exp'} 
                   onChange={e => setConfig({...config, geminiModel: e.target.value})} 
                   className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text text-sm outline-none focus:border-primary transition-colors"
-                >
-                  <option value="gemini-2.0-flash-exp">gemini-2.0-flash-exp (Recomendado/Rápido)</option>
-                  <option value="gemini-1.5-flash">gemini-1.5-flash</option>
-                  <option value="gemini-1.5-pro">gemini-1.5-pro (Avançado)</option>
-                </select>
+                  placeholder="Ex: gemini-3.8-flash"
+                />
+                <datalist id="gemini-models">
+                  <option value="gemini-3.8-flash" />
+                  <option value="gemini-3.7-flash" />
+                  <option value="gemini-2.0-flash-exp" />
+                  <option value="gemini-1.5-flash" />
+                  <option value="gemini-1.5-pro" />
+                </datalist>
               </div>
             </div>
 
