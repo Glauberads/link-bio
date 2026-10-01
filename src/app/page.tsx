@@ -3,6 +3,7 @@ import { Search, Camera, MessageCircle, Laptop, Globe, Briefcase, Copy, Code, Fo
 
 import { prisma } from "@/lib/prisma";
 import { FloatingChat } from "@/components/FloatingChat";
+import { HomeButtons } from "@/components/HomeButtons";
 
 export const dynamic = 'force-dynamic';
 
@@ -85,127 +86,8 @@ export default async function Home() {
            )}
         </div>
 
-        {/* Lista de Botões */}
-        <div className="w-full flex flex-col gap-3 pb-20">
-          
-          {/* Tag de Redes Sociais */}
-          <div className="bg-gradient-to-r from-[#FFF9C4]/10 to-transparent border border-[#FFF9C4]/20 rounded-2xl p-4 flex items-center gap-3">
-            <SparklesIcon className="w-5 h-5 text-[#FFF59D] shrink-0" />
-            <div>
-              <h3 className="font-bold text-[#FFF59D] text-sm">Siga nas redes sociais</h3>
-              <p className="text-[10px] text-text-muted">Conteúdo sobre tecnologia, projetos e IA</p>
-            </div>
-          </div>
-
-          <a href={config?.tiktokUrl || "#"} className="bg-[#111111] border border-white/10 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_15px_rgba(255,255,255,0.05)]">
-            <div className="bg-white rounded-full p-1.5"><Music2 className="w-5 h-5 text-black" /></div>
-            <div>
-              <h3 className="font-bold text-white text-sm">{fixedLinks.tiktok?.title || "TikTok"}</h3>
-              <p className="text-[10px] text-gray-400">{fixedLinks.tiktok?.subtitle || "Conteúdo Rápido"}</p>
-            </div>
-          </a>
-
-          <a href={config?.instagramUrl || "#"} className="bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#FCAF45] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(253,29,29,0.3)] border border-white/10">
-            <div className="bg-white rounded-full p-1.5"><Camera className="w-5 h-5 text-[#E1306C]" /></div>
-            <div>
-              <h3 className="font-bold text-white text-sm">{fixedLinks.instagram?.title || "Instagram"}</h3>
-              <p className="text-[10px] text-white/80">{fixedLinks.instagram?.subtitle || "Acompanhe meu dia a dia"}</p>
-            </div>
-          </a>
-
-          <a href={config?.whatsappUrl || "#"} className="bg-[#25D366] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(37,211,102,0.3)] border border-white/10">
-            <div className="bg-white rounded-full p-1.5"><MessageCircle className="w-5 h-5 text-[#25D366]" /></div>
-            <div>
-              <h3 className="font-bold text-white text-sm">{fixedLinks.whatsapp?.title || "Falar comigo no WhatsApp"}</h3>
-              <p className="text-[10px] text-white/90">{fixedLinks.whatsapp?.subtitle || "Converse diretamente comigo"}</p>
-            </div>
-          </a>
-
-          {config?.youtubeUrl && (
-            <Link href={config.youtubeUrl} target="_blank" className="bg-surface/40 hover:bg-surface/80 border border-primary/20 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-[0_0_20px_rgba(255,0,0,0.15)] group">
-              <div className="bg-[#FF0000]/10 p-2 rounded-xl group-hover:bg-[#FF0000]/20 transition-colors"><Play className="w-5 h-5 text-[#FF0000]" /></div>
-              <div>
-                <h3 className="font-bold text-text group-hover:text-primary transition-colors text-sm">{fixedLinks.youtube?.title || "YouTube"}</h3>
-                <p className="text-[10px] text-text-muted">{fixedLinks.youtube?.subtitle || "Acompanhe vídeos exclusivos"}</p>
-              </div>
-            </Link>
-          )}
-
-          {Array.isArray(config?.customLinks) && config.customLinks.map((link: any) => (
-            <Link key={link.id} href={link.url} target="_blank" className="bg-surface/40 hover:bg-surface/80 border border-primary/20 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform group">
-              {link.iconUrl ? (
-                link.iconUrl.endsWith('.mp4') ? (
-                  <video src={link.iconUrl} autoPlay loop muted playsInline className="w-9 h-9 object-cover rounded-xl" />
-                ) : (
-                  <img src={link.iconUrl} alt={link.title} className="w-9 h-9 object-cover rounded-xl" />
-                )
-              ) : (
-                <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-colors"><LinkIcon className="w-5 h-5 text-primary" /></div>
-              )}
-              <div>
-                <h3 className="font-bold text-text group-hover:text-primary transition-colors text-sm">{link.title}</h3>
-                <p className="text-[10px] text-text-muted">Acessar link</p>
-              </div>
-            </Link>
-          ))}
-
-          <Link href={config?.orcamentoUrl || "/orcamento"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-gold rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-            <div className="bg-gold/10 p-2 rounded-xl group-hover:bg-gold/20 transition-colors"><Laptop className="w-5 h-5 text-gold" /></div>
-            <div>
-              <h3 className="font-bold text-text text-sm">{fixedLinks.orcamento?.title || "Orçamento para desenvolvimento de sistemas"}</h3>
-              <p className="text-[10px] text-text-muted">{fixedLinks.orcamento?.subtitle || "Sites, sistemas, automações e soluções sob medida"}</p>
-            </div>
-          </Link>
-
-          <a href={config?.siteOficialUrl || "#"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#00A859] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-            <div className="bg-[#00A859]/10 p-2 rounded-xl group-hover:bg-[#00A859]/20 transition-colors"><Globe className="w-5 h-5 text-[#00A859]" /></div>
-            <div>
-              <h3 className="font-bold text-text text-sm">{fixedLinks.siteOficial?.title || "Conhecer a FFR do Brasil"}</h3>
-              <p className="text-[10px] text-text-muted">{fixedLinks.siteOficial?.subtitle || "Acesse nosso site oficial"}</p>
-            </div>
-          </a>
-
-          <Link href={config?.sistemasUrl || "/sistemas"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#8D6E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-            <div className="bg-[#8D6E63]/10 p-2 rounded-xl group-hover:bg-[#8D6E63]/20 transition-colors"><Briefcase className="w-5 h-5 text-[#8D6E63]" /></div>
-            <div>
-              <h3 className="font-bold text-text text-sm">{fixedLinks.sistemas?.title || "9 sistemas prontos para personalizar e revender"}</h3>
-              <p className="text-[10px] text-text-muted">{fixedLinks.sistemas?.subtitle || "Só R$ 19,90 • 7 dias de garantia"}</p>
-            </div>
-          </Link>
-
-          <Link href={config?.siteGenUrl || "/projetos/sitegenclone"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#E91E63] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-            <div className="bg-[#E91E63]/10 p-2 rounded-xl group-hover:bg-[#E91E63]/20 transition-colors"><Copy className="w-5 h-5 text-[#E91E63]" /></div>
-            <div>
-              <h3 className="font-bold text-text text-sm">{fixedLinks.siteGenClone?.title || "SiteGenClone"}</h3>
-              <p className="text-[10px] text-text-muted">{fixedLinks.siteGenClone?.subtitle || "Clonador de sites para projetos autorizados"}</p>
-            </div>
-          </Link>
-
-          <Link href={config?.githubUrl || "/biblioteca"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#9E9E9E] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-            <div className="bg-[#9E9E9E]/10 p-2 rounded-xl group-hover:bg-[#9E9E9E]/20 transition-colors"><Code className="w-5 h-5 text-[#9E9E9E]" /></div>
-            <div>
-              <h3 className="font-bold text-text text-sm">{fixedLinks.github?.title || "Repositórios GitHub Premium Free"}</h3>
-              <p className="text-[10px] text-text-muted">{fixedLinks.github?.subtitle || "Recursos gratuitos organizados por categoria"}</p>
-            </div>
-          </Link>
-
-          <Link href={config?.projetosUrl || "/projetos"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#4CAF50] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-            <div className="bg-[#4CAF50]/10 p-2 rounded-xl group-hover:bg-[#4CAF50]/20 transition-colors"><FolderOpen className="w-5 h-5 text-[#4CAF50]" /></div>
-            <div>
-              <h3 className="font-bold text-text text-sm">{fixedLinks.projetos?.title || "Ver projetos desenvolvidos"}</h3>
-              <p className="text-[10px] text-text-muted">{fixedLinks.projetos?.subtitle || "Sistemas, produtos e projetos em evolução"}</p>
-            </div>
-          </Link>
-
-          <Link href={config?.dicasUrl || "/biblioteca"} className="bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#2196F3] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group">
-            <div className="bg-[#2196F3]/10 p-2 rounded-xl group-hover:bg-[#2196F3]/20 transition-colors"><Diamond className="w-5 h-5 text-[#2196F3]" /></div>
-            <div>
-              <h3 className="font-bold text-text text-sm">{fixedLinks.dicas?.title || "Dicas grátis de IA, automações e ferramentas"}</h3>
-              <p className="text-[10px] text-text-muted">{fixedLinks.dicas?.subtitle || "Aprenda com conteúdos práticos e links úteis"}</p>
-            </div>
-          </Link>
-          
-        </div>
+        {/* Componente de Botões com Tracking (Client Side) */}
+        <HomeButtons config={config} fixedLinks={fixedLinks} />
       </div>
 
       {/* Coluna Direita: Personagem (Oculto no Mobile) */}
