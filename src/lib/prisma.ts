@@ -10,8 +10,8 @@ try {
   prismaInstance = globalForPrisma.prisma ?? new PrismaClient()
   if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prismaInstance
 } catch (e) {
-  console.warn("Prisma client initialization failed (expected during build):", e)
-  prismaInstance = {} as PrismaClient
+  console.error("Prisma client initialization failed:", e)
+  throw e
 }
 
 export const prisma = prismaInstance
