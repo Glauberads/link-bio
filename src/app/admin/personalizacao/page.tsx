@@ -14,6 +14,8 @@ export default function PersonalizacaoPage() {
   const [highlights, setHighlights] = useState<any[]>([]);
   const [editingLink, setEditingLink] = useState<string | number | null>(null);
   const [editingHighlight, setEditingHighlight] = useState<number | null>(null);
+  const [projectsCards, setProjectsCards] = useState<any[]>([]);
+  const [editingProjectCard, setEditingProjectCard] = useState<number | null>(null);
 
   const DEFAULT_HIGHLIGHTS = [
     { id: "tiktok", iconName: 'Music2', label: "TikTok", color: "text-primary", bg: "bg-surface", border: "border-primary/20" },
@@ -27,6 +29,14 @@ export default function PersonalizacaoPage() {
     { id: "projetos", iconName: 'FolderOpen', label: "Projetos", color: "text-[#4CAF50]", bg: "bg-[#4CAF50]/10", border: "border-[#4CAF50]/20" },
     { id: "github", iconName: 'Code', label: "GitHub", color: "text-[#9E9E9E]", bg: "bg-[#9E9E9E]/10", border: "border-[#9E9E9E]/20" },
     { id: "dicas", iconName: 'Diamond', label: "Dicas IA", color: "text-[#2196F3]", bg: "bg-[#2196F3]/10", border: "border-[#2196F3]/20" },
+  ];
+
+  const DEFAULT_PROJECTS_CARDS = [
+    { nome: "GranjaFlow", slug: "granjaflow", status: "Em validação", desc: "Gestão inteligente para o agronegócio.", icon: 'Hexagon', color: "from-amber-400 to-orange-600", visible: true },
+    { nome: "Papuga", slug: "papuga", status: "Disponível", desc: "Plataforma de automação e comunicação.", icon: 'MessageCircle', color: "from-blue-400 to-indigo-600", visible: true },
+    { nome: "Agência de Agentes de IA", slug: "agencia-ia", status: "Em desenvolvimento", desc: "Força de trabalho autônoma sob demanda.", icon: 'Cpu', color: "from-primary to-gold", visible: true },
+    { nome: "SiteGenClone", slug: "sitegenclone", status: "Disponível", desc: "Copie qualquer site em segundos.", icon: 'Zap', color: "from-pink-500 to-rose-600", visible: true },
+    { nome: "Conecta", slug: "conecta", status: "Disponível", desc: "Hub inteligente e link na bio.", icon: 'Code2', color: "from-emerald-400 to-teal-600", visible: true },
   ];
 
   const COLOR_PRESETS = [
@@ -91,6 +101,7 @@ export default function PersonalizacaoPage() {
         setConfig(data);
         setCustomLinks(data.customLinks || []);
         setHighlights(data.fixedLinksConfig?.highlights || DEFAULT_HIGHLIGHTS);
+        setProjectsCards(data.fixedLinksConfig?.projectsCards || DEFAULT_PROJECTS_CARDS);
         setLoading(false);
       });
   }, []);
@@ -119,7 +130,7 @@ export default function PersonalizacaoPage() {
       let updatedConfig = { 
         ...config, 
         customLinks, 
-        fixedLinksConfig: { ...(config.fixedLinksConfig || {}), highlights } 
+        fixedLinksConfig: { ...(config.fixedLinksConfig || {}), highlights, projectsCards } 
       };
 
       if (logoFile) {
@@ -603,6 +614,154 @@ export default function PersonalizacaoPage() {
                                 {h.visible === false ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                               </button>
                               <button onClick={() => setEditingHighlight(index)} className="p-2 bg-surface hover:bg-primary/20 rounded-lg text-text-muted hover:text-primary transition-colors border border-primary/20">
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          <div className="bg-surface border border-primary/20 rounded-2xl p-6 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-text">Projetos (Landing Page)</h3>
+              <Button type="button" variant="outline" size="sm" onClick={() => {
+                setProjectsCards([...projectsCards, { nome: "Novo Projeto", slug: "novo", status: "Em planejamento", desc: "Descrição breve", icon: 'Code2', color: "from-primary to-primary", visible: true }]);
+              }} className="text-xs py-1 h-auto bg-primary/10 border-primary/30 text-primary hover:bg-primary/20">
+                + Adicionar Projeto
+              </Button>
+            </div>
+            
+            <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-3">
+                {projectsCards.map((proj, index) => {
+                  const isEditing = editingProjectCard === index;
+                  
+                  return (
+                    <div key={index} className="bg-background border border-primary/20 p-3 rounded-xl flex gap-2">
+                      <div className="flex flex-col gap-1 items-center justify-center border-r border-primary/20 pr-2">
+                        <button onClick={() => {
+                          if (index > 0) {
+                            const newP = [...projectsCards];
+                            [newP[index - 1], newP[index]] = [newP[index], newP[index - 1]];
+                            setProjectsCards(newP);
+                          }
+                        }} className="text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted" disabled={index === 0}>
+                          <ArrowUp className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => {
+                          if (index < projectsCards.length - 1) {
+                            const newP = [...projectsCards];
+                            [newP[index + 1], newP[index]] = [newP[index], newP[index + 1]];
+                            setProjectsCards(newP);
+                          }
+                        }} className="text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted" disabled={index === projectsCards.length - 1}>
+                          <ArrowDown className="w-4 h-4" />
+                        </button>
+                      </div>
+                      
+                      <div className="flex-1">
+                        {isEditing ? (
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-xs font-bold text-primary">Editando Projeto</span>
+                              <div className="flex gap-2">
+                                <button onClick={() => {
+                                  setProjectsCards(projectsCards.filter((_, i) => i !== index));
+                                }} className="text-red-500 hover:text-white p-1 bg-red-500/10 hover:bg-red-500 rounded text-xs px-2">Excluir</button>
+                                <button onClick={() => setEditingProjectCard(null)} className="text-text-muted hover:text-white p-1 bg-surface rounded"><Save className="w-4 h-4" /></button>
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="text-[10px] text-text-muted uppercase">Nome do Projeto</label>
+                                <input type="text" value={proj.nome} onChange={e => {
+                                  const newP = [...projectsCards];
+                                  newP[index].nome = e.target.value;
+                                  setProjectsCards(newP);
+                                }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
+                              </div>
+                              <div>
+                                <label className="text-[10px] text-text-muted uppercase">Slug (URL)</label>
+                                <input type="text" value={proj.slug} onChange={e => {
+                                  const newP = [...projectsCards];
+                                  newP[index].slug = e.target.value;
+                                  setProjectsCards(newP);
+                                }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="text-[10px] text-text-muted uppercase">Status</label>
+                                <input type="text" value={proj.status} onChange={e => {
+                                  const newP = [...projectsCards];
+                                  newP[index].status = e.target.value;
+                                  setProjectsCards(newP);
+                                }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
+                              </div>
+                              <div>
+                                <label className="text-[10px] text-text-muted uppercase">Descrição Curta</label>
+                                <input type="text" value={proj.desc} onChange={e => {
+                                  const newP = [...projectsCards];
+                                  newP[index].desc = e.target.value;
+                                  setProjectsCards(newP);
+                                }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="text-[10px] text-text-muted uppercase">Glow (Tailwind Gradients)</label>
+                                <input type="text" value={proj.color} onChange={e => {
+                                  const newP = [...projectsCards];
+                                  newP[index].color = e.target.value;
+                                  setProjectsCards(newP);
+                                }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" placeholder="from-amber-400 to-orange-600" />
+                              </div>
+                              <div>
+                                <label className="text-[10px] text-text-muted uppercase">Ícone (Lucide)</label>
+                                <input type="text" value={proj.icon} onChange={e => {
+                                  const newP = [...projectsCards];
+                                  newP[index].icon = e.target.value;
+                                  setProjectsCards(newP);
+                                }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" placeholder="Hexagon" />
+                              </div>
+                            </div>
+                            
+                          </div>
+                        ) : (
+                          <div className="flex justify-between items-center group">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-8 h-8 rounded-full border border-primary/20 bg-gradient-to-br ${proj.color} flex items-center justify-center opacity-80`} />
+                              <div>
+                                <h5 className="text-sm font-bold text-text group-hover:text-primary transition-colors flex items-center gap-2">
+                                  {proj.nome}
+                                  {proj.visible === false && (
+                                    <span className="px-1.5 py-0.5 rounded text-[8px] bg-red-500/20 text-red-400 font-normal">Oculto</span>
+                                  )}
+                                </h5>
+                                <p className="text-[10px] text-text-muted truncate">{proj.status} - {proj.slug}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <button 
+                                onClick={() => {
+                                  const newP = [...projectsCards];
+                                  newP[index].visible = proj.visible === false ? true : false;
+                                  setProjectsCards(newP);
+                                }} 
+                                className={`p-2 bg-surface hover:bg-primary/20 rounded-lg transition-colors border border-primary/20 ${proj.visible === false ? 'text-red-400' : 'text-primary'}`}
+                                title={proj.visible === false ? 'Mostrar Projeto' : 'Ocultar Projeto'}
+                              >
+                                {proj.visible === false ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                              </button>
+                              <button onClick={() => setEditingProjectCard(index)} className="p-2 bg-surface hover:bg-primary/20 rounded-lg text-text-muted hover:text-primary transition-colors border border-primary/20">
                                 <Pencil className="w-4 h-4" />
                               </button>
                             </div>

@@ -1,25 +1,34 @@
 import Link from "next/link";
 import { Sparkles, ArrowRight, Rocket, Code2, Cpu, MessageCircle, ChevronRight, Hexagon, Zap } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
-const projetos = [
-  { nome: "GranjaFlow", slug: "granjaflow", status: "Em validação", desc: "Gestão inteligente para o agronegócio.", icon: Hexagon, color: "from-amber-400 to-orange-600" },
-  { nome: "Papuga", slug: "papuga", status: "Disponível", desc: "Plataforma de automação e comunicação.", icon: MessageCircle, color: "from-blue-400 to-indigo-600" },
-  { nome: "Agência de Agentes de IA", slug: "agencia-ia", status: "Em desenvolvimento", desc: "Força de trabalho autônoma sob demanda.", icon: Cpu, color: "from-primary to-gold" },
-  { nome: "SiteGenClone", slug: "sitegenclone", status: "Disponível", desc: "Copie qualquer site em segundos.", icon: Zap, color: "from-pink-500 to-rose-600" },
-  { nome: "Conecta", slug: "conecta", status: "Disponível", desc: "Hub inteligente e link na bio.", icon: Code2, color: "from-emerald-400 to-teal-600" },
+const DEFAULT_PROJETOS = [
+  { nome: "GranjaFlow", slug: "granjaflow", status: "Em validação", desc: "Gestão inteligente para o agronegócio.", icon: 'Hexagon', color: "from-amber-400 to-orange-600", visible: true },
+  { nome: "Papuga", slug: "papuga", status: "Disponível", desc: "Plataforma de automação e comunicação.", icon: 'MessageCircle', color: "from-blue-400 to-indigo-600", visible: true },
+  { nome: "Agência de Agentes de IA", slug: "agencia-ia", status: "Em desenvolvimento", desc: "Força de trabalho autônoma sob demanda.", icon: 'Cpu', color: "from-primary to-gold", visible: true },
+  { nome: "SiteGenClone", slug: "sitegenclone", status: "Disponível", desc: "Copie qualquer site em segundos.", icon: 'Zap', color: "from-pink-500 to-rose-600", visible: true },
+  { nome: "Conecta", slug: "conecta", status: "Disponível", desc: "Hub inteligente e link na bio.", icon: 'Code2', color: "from-emerald-400 to-teal-600", visible: true },
 ];
 
 export default async function ProjetosPage() {
   let whatsappUrl = "https://wa.me/";
+  let projetosCards = DEFAULT_PROJETOS;
   try {
     const config = await prisma.siteConfig.findUnique({ where: { id: 1 } });
     if (config?.whatsappUrl) {
       whatsappUrl = config.whatsappUrl;
     }
+    const fixedLinksConfig = config?.fixedLinksConfig as any;
+    if (fixedLinksConfig?.projectsCards) {
+      projetosCards = fixedLinksConfig.projectsCards;
+    }
   } catch (e) {
     console.error(e);
   }
+
+  // Filter visible only
+  const visibleProjetos = projetosCards.filter(p => p.visible !== false);
 
   return (
     <main className="min-h-screen bg-[#050505] relative overflow-hidden flex flex-col items-center font-sans selection:bg-primary/30">
@@ -64,8 +73,8 @@ export default async function ProjetosPage() {
       {/* Projects Grid */}
       <section className="w-full max-w-6xl px-6 py-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projetos.map((proj, idx) => {
-            const Icon = proj.icon;
+          {visibleProjetos.map((proj, idx) => {
+            const Icon = (LucideIcons as any)[proj.icon] || LucideIcons.Code2;
             const delay = 400 + (idx * 100);
             
             return (
