@@ -531,13 +531,49 @@ export default function PersonalizacaoPage() {
                                 </select>
                               </div>
                             </div>
+
+                            <div className="mt-3 border-t border-primary/10 pt-3">
+                              <label className="text-[10px] text-text-muted uppercase mb-1 block">Imagem do Destaque (Opcional, substitui o ícone)</label>
+                              <div className="flex gap-2 items-center">
+                                {h.imageUrl ? (
+                                  <div className="relative">
+                                    <img src={h.imageUrl} className="w-10 h-10 rounded-full object-cover border border-primary/30" />
+                                    <button onClick={() => {
+                                      const newH = [...highlights];
+                                      newH[index].imageUrl = null;
+                                      setHighlights(newH);
+                                    }} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">×</button>
+                                  </div>
+                                ) : (
+                                  <div className="w-10 h-10 rounded-full bg-surface/50 border border-primary/20 flex items-center justify-center text-[8px] text-text-muted text-center leading-tight">Sem<br/>Img</div>
+                                )}
+                                <label className="flex-1 bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs cursor-pointer flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors">
+                                  <ImageIcon className="w-4 h-4" /> Upload de Imagem
+                                  <input type="file" accept="image/*" className="hidden" onChange={async e => {
+                                    if (e.target.files?.[0]) {
+                                      try {
+                                        const url = await handleUpload(e.target.files[0], `highlight_${Date.now()}`);
+                                        const newH = [...highlights];
+                                        newH[index].imageUrl = url;
+                                        setHighlights(newH);
+                                      } catch (err) { }
+                                    }
+                                  }} />
+                                </label>
+                              </div>
+                              <p className="text-[9px] text-primary/70 mt-2 font-medium">💡 Proporção recomendada: 1:1 (Quadrada). Tamanho ideal: 200x200px.</p>
+                            </div>
                             
                           </div>
                         ) : (
                           <div className="flex justify-between items-center group">
                             <div className="flex items-center gap-3">
-                              <div className={`w-8 h-8 rounded-full border-2 ${h.border} ${h.bg} flex items-center justify-center`}>
-                                <div className={`w-3 h-3 rounded-full bg-current ${h.color} opacity-80`} />
+                              <div className={`w-8 h-8 rounded-full border-2 ${h.border} ${h.bg} flex items-center justify-center overflow-hidden`}>
+                                {h.imageUrl ? (
+                                  <img src={h.imageUrl} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className={`w-3 h-3 rounded-full bg-current ${h.color} opacity-80`} />
+                                )}
                               </div>
                               <div>
                                 <h5 className="text-sm font-bold text-text group-hover:text-primary transition-colors">{h.label}</h5>

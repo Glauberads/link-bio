@@ -53,8 +53,12 @@ export function Highlights({ fixedLinks }: { fixedLinks: any }) {
           >
             <div className={`w-[70px] h-[70px] rounded-full border-2 ${item.border} ${item.bg} flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform shadow-lg`}>
               {/* Anel animado simulando stories */}
-              <div className="absolute inset-0 rounded-full border-[3px] border-transparent group-hover:border-primary/50 transition-colors" />
-              <Icon className={`w-7 h-7 ${item.color}`} />
+              <div className="absolute inset-0 rounded-full border-[3px] border-transparent group-hover:border-primary/50 transition-colors z-20 pointer-events-none" />
+              {item.imageUrl ? (
+                <img src={item.imageUrl} alt={item.label} className="w-[58px] h-[58px] rounded-full object-cover z-10" />
+              ) : (
+                <Icon className={`w-7 h-7 ${item.color} z-10`} />
+              )}
             </div>
             <span className="text-[11px] font-bold text-text-muted group-hover:text-primary transition-colors tracking-wide">
               {item.label}
