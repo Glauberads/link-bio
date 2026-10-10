@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { Search, Camera, MessageCircle, Laptop, Globe, Briefcase, Copy, Code, FolderOpen, Diamond, Music2, Play, Link as LinkIcon } from "lucide-react";
 import { trackEvent } from "@/lib/tracking";
+import { GlobalSearchModal } from "./GlobalSearchModal";
 
 function SparklesIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -95,6 +97,7 @@ function CustomLinkButton({ link, onClick }: { link: any; onClick: () => void })
 }
 
 export function HomeButtons({ config, fixedLinks }: { config: any; fixedLinks: any }) {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const handleTrack = (eventName: string, alvo: string, url: string) => {
     trackEvent(eventName, { alvo, tipo: "botao", pagina: "home" });
   };
@@ -198,10 +201,14 @@ export function HomeButtons({ config, fixedLinks }: { config: any; fixedLinks: a
 
   return (
     <div className="w-full flex flex-col gap-3 pb-20">
+      <GlobalSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
       {/* Caixa de Pesquisa */}
       <div
-        onClick={() => handleTrack("Search", "Pesquisa Home", "/biblioteca")}
+        onClick={() => {
+          trackEvent("Search", { alvo: "Pesquisa Home" });
+          setIsSearchOpen(true);
+        }}
         className="bg-surface/80 backdrop-blur-md rounded-3xl p-3 flex items-start border border-primary/30 shadow-[0_0_25px_rgba(0,0,0,0.5)] mb-8 transition-all hover:border-primary/50 hover:shadow-[0_0_30px_rgba(245,138,31,0.15)] cursor-pointer"
       >
         <div className="bg-[#004d40] w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(0,77,64,0.6)]">
