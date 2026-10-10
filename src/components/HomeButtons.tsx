@@ -206,7 +206,7 @@ export function HomeButtons({ config, fixedLinks }: { config: any; fixedLinks: a
       {/* Caixa de Pesquisa */}
       <div
         onClick={() => {
-          trackEvent("Search", { alvo: "Pesquisa Home" });
+          trackEvent("Search", { alvo: "Pesquisa Home", tipo: "botao", pagina: "home" });
           setIsSearchOpen(true);
         }}
         className="bg-surface/80 backdrop-blur-md rounded-3xl p-3 flex items-start border border-primary/30 shadow-[0_0_25px_rgba(0,0,0,0.5)] mb-8 transition-all hover:border-primary/50 hover:shadow-[0_0_30px_rgba(245,138,31,0.15)] cursor-pointer"
