@@ -3,6 +3,8 @@ import { Sparkles, ArrowRight, Rocket, Code2, Cpu, MessageCircle, ChevronRight, 
 import * as LucideIcons from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
+
 const DEFAULT_PROJETOS = [
   { nome: "GranjaFlow", slug: "granjaflow", status: "Em validação", desc: "Gestão inteligente para o agronegócio.", icon: 'Hexagon', color: "from-amber-400 to-orange-600", visible: true },
   { nome: "Papuga", slug: "papuga", status: "Disponível", desc: "Plataforma de automação e comunicação.", icon: 'MessageCircle', color: "from-blue-400 to-indigo-600", visible: true },
