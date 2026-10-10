@@ -4,6 +4,7 @@ import { Search, Camera, MessageCircle, Laptop, Globe, Briefcase, Copy, Code, Fo
 import { prisma } from "@/lib/prisma";
 import { FloatingChat } from "@/components/FloatingChat";
 import { HomeButtons } from "@/components/HomeButtons";
+import { Highlights } from "@/components/Highlights";
 
 export const dynamic = 'force-dynamic';
 
@@ -67,6 +68,9 @@ export default async function Home() {
              </div>
            )}
         </div>
+
+        {/* Seção de Destaques (Highlights) */}
+        <Highlights fixedLinks={fixedLinks} />
 
         {/* Componente de Botões com Tracking (Client Side) */}
         <HomeButtons config={config} fixedLinks={fixedLinks} />

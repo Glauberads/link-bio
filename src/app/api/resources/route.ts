@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     if (!session) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
 
     const body = await req.json();
-    
+
     const slug = body.slug || body.titulo.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
     const resource = await prisma.resource.create({

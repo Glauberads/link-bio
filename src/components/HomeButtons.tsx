@@ -16,7 +16,7 @@ function SparklesIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-function BannerButton({ href, isExternal, onClick, bannerUrl, fraseDestaque, title }: any) {
+function BannerButton({ id, href, isExternal, onClick, bannerUrl, fraseDestaque, title }: any) {
   const content = (
     <div className="flex flex-col gap-2 hover:scale-[1.02] transition-transform group">
       <img src={bannerUrl} alt={title} className="w-full h-auto rounded-2xl object-cover shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
@@ -30,9 +30,9 @@ function BannerButton({ href, isExternal, onClick, bannerUrl, fraseDestaque, tit
   );
 
   return isExternal ? (
-    <a href={href} target="_blank" onClick={onClick} className="block w-full">{content}</a>
+    <a id={id ? `btn-${id}` : undefined} href={href} target="_blank" onClick={onClick} className="block w-full">{content}</a>
   ) : (
-    <Link href={href} onClick={onClick} className="block w-full">{content}</Link>
+    <Link id={id ? `btn-${id}` : undefined} href={href} onClick={onClick} className="block w-full">{content}</Link>
   );
 }
 
@@ -45,7 +45,7 @@ function FixedButton({ id, href, onClick, fixedLinks, wrapperClassName, iconWrap
   const title = linkData?.title || defaultTitle;
 
   if (bannerUrl) {
-    return <BannerButton href={href} isExternal={isExternal} onClick={onClick} bannerUrl={bannerUrl} fraseDestaque={fraseDestaque} title={title} />;
+    return <BannerButton id={id} href={href} isExternal={isExternal} onClick={onClick} bannerUrl={bannerUrl} fraseDestaque={fraseDestaque} title={title} />;
   }
 
   const content = (
@@ -59,9 +59,9 @@ function FixedButton({ id, href, onClick, fixedLinks, wrapperClassName, iconWrap
   );
 
   return isExternal ? (
-    <a href={href} target="_blank" onClick={onClick} className="block w-full">{content}</a>
+    <a id={`btn-${id}`} href={href} target="_blank" onClick={onClick} className="block w-full">{content}</a>
   ) : (
-    <Link href={href} onClick={onClick} className="block w-full">{content}</Link>
+    <Link id={`btn-${id}`} href={href} onClick={onClick} className="block w-full">{content}</Link>
   );
 }
 
@@ -72,11 +72,11 @@ function CustomLinkButton({ link, onClick }: { link: any; onClick: () => void })
   const fraseDestaque = link.fraseDestaque;
 
   if (bannerUrl) {
-    return <BannerButton href={link.url} isExternal onClick={onClick} bannerUrl={bannerUrl} fraseDestaque={fraseDestaque} title={link.title} />;
+    return <BannerButton id={link.id} href={link.url} isExternal onClick={onClick} bannerUrl={bannerUrl} fraseDestaque={fraseDestaque} title={link.title} />;
   }
 
   return (
-    <a href={link.url} target="_blank" onClick={onClick} className="bg-surface/40 hover:bg-surface/80 border border-primary/20 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform group">
+    <a id={`btn-${link.id}`} href={link.url} target="_blank" onClick={onClick} className="bg-surface/40 hover:bg-surface/80 border border-primary/20 rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform group">
       {link.iconUrl ? (
         link.iconUrl.endsWith('.mp4') ? (
           <video src={link.iconUrl} autoPlay loop muted playsInline className="w-9 h-9 object-cover rounded-xl" />
