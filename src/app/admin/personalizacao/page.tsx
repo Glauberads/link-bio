@@ -11,7 +11,32 @@ export default function PersonalizacaoPage() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [characterFile, setCharacterFile] = useState<File | null>(null);
   const [customLinks, setCustomLinks] = useState<any[]>([]);
+  const [highlights, setHighlights] = useState<any[]>([]);
   const [editingLink, setEditingLink] = useState<string | number | null>(null);
+  const [editingHighlight, setEditingHighlight] = useState<number | null>(null);
+
+  const DEFAULT_HIGHLIGHTS = [
+    { id: "orcamento", iconName: 'Laptop', label: "Orçamento", color: "text-gold", bg: "bg-gold/10", border: "border-gold/20" },
+    { id: "sistemas", iconName: 'Briefcase', label: "Sistemas", color: "text-[#8D6E63]", bg: "bg-[#8D6E63]/10", border: "border-[#8D6E63]/20" },
+    { id: "siteGenClone", iconName: 'Code', label: "SiteGenClone", color: "text-[#E91E63]", bg: "bg-[#E91E63]/10", border: "border-[#E91E63]/20" },
+    { id: "projetos", iconName: 'FolderOpen', label: "Projetos", color: "text-[#4CAF50]", bg: "bg-[#4CAF50]/10", border: "border-[#4CAF50]/20" },
+    { id: "github", iconName: 'Code', label: "GitHub", color: "text-[#9E9E9E]", bg: "bg-[#9E9E9E]/10", border: "border-[#9E9E9E]/20" },
+    { id: "dicas", iconName: 'Diamond', label: "Dicas IA", color: "text-[#2196F3]", bg: "bg-[#2196F3]/10", border: "border-[#2196F3]/20" },
+  ];
+
+  const COLOR_PRESETS = [
+    { name: 'Ouro', color: 'text-gold', bg: 'bg-gold/10', border: 'border-gold/20' },
+    { name: 'Marrom', color: 'text-[#8D6E63]', bg: 'bg-[#8D6E63]/10', border: 'border-[#8D6E63]/20' },
+    { name: 'Rosa', color: 'text-[#E91E63]', bg: 'bg-[#E91E63]/10', border: 'border-[#E91E63]/20' },
+    { name: 'Verde', color: 'text-[#4CAF50]', bg: 'bg-[#4CAF50]/10', border: 'border-[#4CAF50]/20' },
+    { name: 'Cinza', color: 'text-[#9E9E9E]', bg: 'bg-[#9E9E9E]/10', border: 'border-[#9E9E9E]/20' },
+    { name: 'Azul', color: 'text-[#2196F3]', bg: 'bg-[#2196F3]/10', border: 'border-[#2196F3]/20' },
+    { name: 'Roxo', color: 'text-[#9C27B0]', bg: 'bg-[#9C27B0]/10', border: 'border-[#9C27B0]/20' },
+    { name: 'Vermelho', color: 'text-[#F44336]', bg: 'bg-[#F44336]/10', border: 'border-[#F44336]/20' },
+    { name: 'Primária (Laranja)', color: 'text-primary', bg: 'bg-primary/10', border: 'border-primary/20' }
+  ];
+  
+  const ICON_OPTIONS = ['Laptop', 'Briefcase', 'Code', 'FolderOpen', 'Diamond', 'Music2', 'Camera', 'MessageCircle', 'Play', 'Star', 'Heart', 'Zap', 'Globe', 'ShoppingCart', 'Video'];
 
   const DEFAULT_FIXED_LINKS = [
     { id: 'tiktok', defaultTitle: 'TikTok', defaultSubtitle: 'Conteúdo Rápido', urlField: 'tiktokUrl' },
@@ -60,6 +85,7 @@ export default function PersonalizacaoPage() {
       .then(data => {
         setConfig(data);
         setCustomLinks(data.customLinks || []);
+        setHighlights(data.fixedLinksConfig?.highlights || DEFAULT_HIGHLIGHTS);
         setLoading(false);
       });
   }, []);
@@ -85,7 +111,11 @@ export default function PersonalizacaoPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      let updatedConfig = { ...config, customLinks };
+      let updatedConfig = { 
+        ...config, 
+        customLinks, 
+        fixedLinksConfig: { ...(config.fixedLinksConfig || {}), highlights } 
+      };
 
       if (logoFile) {
         const url = await handleUpload(logoFile, 'logo');
@@ -389,6 +419,142 @@ export default function PersonalizacaoPage() {
                     );
                   });
                 })()}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-surface border border-primary/20 rounded-2xl p-6 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-text">Destaques (Home)</h3>
+              <Button type="button" variant="outline" size="sm" onClick={() => {
+                setHighlights([...highlights, { id: '', iconName: 'Star', label: 'Novo Destaque', color: 'text-primary', bg: 'bg-primary/10', border: 'border-primary/20' }]);
+              }} className="text-xs py-1 h-auto bg-primary/10 border-primary/30 text-primary hover:bg-primary/20">
+                + Adicionar Destaque
+              </Button>
+            </div>
+            
+            <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-3">
+                {highlights.map((h, index) => {
+                  const isEditing = editingHighlight === index;
+                  
+                  return (
+                    <div key={index} className="bg-background border border-primary/20 p-3 rounded-xl flex gap-2">
+                      <div className="flex flex-col gap-1 items-center justify-center border-r border-primary/20 pr-2">
+                        <button onClick={() => {
+                          if (index > 0) {
+                            const newH = [...highlights];
+                            [newH[index - 1], newH[index]] = [newH[index], newH[index - 1]];
+                            setHighlights(newH);
+                          }
+                        }} className="text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted" disabled={index === 0}>
+                          <ArrowUp className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => {
+                          if (index < highlights.length - 1) {
+                            const newH = [...highlights];
+                            [newH[index + 1], newH[index]] = [newH[index], newH[index + 1]];
+                            setHighlights(newH);
+                          }
+                        }} className="text-text-muted hover:text-primary disabled:opacity-30 disabled:hover:text-text-muted" disabled={index === highlights.length - 1}>
+                          <ArrowDown className="w-4 h-4" />
+                        </button>
+                      </div>
+                      
+                      <div className="flex-1">
+                        {isEditing ? (
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-xs font-bold text-primary">Editando Destaque</span>
+                              <div className="flex gap-2">
+                                <button onClick={() => {
+                                  setHighlights(highlights.filter((_, i) => i !== index));
+                                }} className="text-red-500 hover:text-white p-1 bg-red-500/10 hover:bg-red-500 rounded text-xs px-2">Excluir</button>
+                                <button onClick={() => setEditingHighlight(null)} className="text-text-muted hover:text-white p-1 bg-surface rounded"><Save className="w-4 h-4" /></button>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <label className="text-[10px] text-text-muted uppercase">Nome do Destaque</label>
+                              <input type="text" value={h.label} onChange={e => {
+                                const newH = [...highlights];
+                                newH[index].label = e.target.value;
+                                setHighlights(newH);
+                              }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs" />
+                            </div>
+                            
+                            <div>
+                              <label className="text-[10px] text-text-muted uppercase">Aponta para o Botão (ID)</label>
+                              <select value={h.id} onChange={e => {
+                                const newH = [...highlights];
+                                newH[index].id = e.target.value;
+                                setHighlights(newH);
+                              }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs outline-none">
+                                <option value="">Selecione um botão</option>
+                                {DEFAULT_FIXED_LINKS.map(l => (
+                                  <option key={l.id} value={l.id}>{config.fixedLinksConfig?.[l.id]?.title || l.defaultTitle}</option>
+                                ))}
+                                {customLinks.map(l => (
+                                  <option key={l.id} value={l.id}>{l.title}</option>
+                                ))}
+                              </select>
+                            </div>
+                            
+                            <div className="flex gap-2">
+                              <div className="flex-1">
+                                <label className="text-[10px] text-text-muted uppercase">Cor</label>
+                                <select value={COLOR_PRESETS.find(c => c.color === h.color)?.name || 'Primária (Laranja)'} onChange={e => {
+                                  const preset = COLOR_PRESETS.find(c => c.name === e.target.value);
+                                  if (preset) {
+                                    const newH = [...highlights];
+                                    newH[index].color = preset.color;
+                                    newH[index].bg = preset.bg;
+                                    newH[index].border = preset.border;
+                                    setHighlights(newH);
+                                  }
+                                }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs outline-none">
+                                  {COLOR_PRESETS.map(c => (
+                                    <option key={c.name} value={c.name}>{c.name}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="flex-1">
+                                <label className="text-[10px] text-text-muted uppercase">Ícone (Lucide)</label>
+                                <select value={h.iconName} onChange={e => {
+                                  const newH = [...highlights];
+                                  newH[index].iconName = e.target.value;
+                                  setHighlights(newH);
+                                }} className="w-full bg-surface border border-primary/30 rounded-lg px-3 py-2 text-text text-xs outline-none">
+                                  {ICON_OPTIONS.map(icon => (
+                                    <option key={icon} value={icon}>{icon}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+                            
+                          </div>
+                        ) : (
+                          <div className="flex justify-between items-center group">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-8 h-8 rounded-full border-2 ${h.border} ${h.bg} flex items-center justify-center`}>
+                                <div className={`w-3 h-3 rounded-full bg-current ${h.color} opacity-80`} />
+                              </div>
+                              <div>
+                                <h5 className="text-sm font-bold text-text group-hover:text-primary transition-colors">{h.label}</h5>
+                                <p className="text-[10px] text-text-muted truncate">Linka para: {h.id || 'Nenhum'}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <button onClick={() => setEditingHighlight(index)} className="p-2 bg-surface hover:bg-primary/20 rounded-lg text-text-muted hover:text-primary transition-colors border border-primary/20">
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
