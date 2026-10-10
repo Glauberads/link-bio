@@ -10,23 +10,24 @@ export async function GET(request: Request) {
   }
 
   try {
+    const searchTerm = `%${q}%`;
     const results = await prisma.$queryRaw`
       SELECT id, slug, titulo as nome, descricao, 'biblioteca' as type
       FROM "Resource"
-      WHERE to_tsvector('portuguese', titulo || ' ' || descricao) @@ plainto_tsquery('portuguese', ${q})
+      WHERE (titulo ILIKE ${searchTerm} OR descricao ILIKE ${searchTerm})
       AND ativo = true
 
       UNION ALL
 
       SELECT id, slug, nome, descricao, 'projetos' as type
       FROM "Project"
-      WHERE to_tsvector('portuguese', nome || ' ' || descricao) @@ plainto_tsquery('portuguese', ${q})
+      WHERE (nome ILIKE ${searchTerm} OR descricao ILIKE ${searchTerm})
 
       UNION ALL
 
       SELECT id, slug, nicho as nome, descricao, 'sistemas' as type
       FROM "SystemProduct"
-      WHERE to_tsvector('portuguese', nicho || ' ' || descricao) @@ plainto_tsquery('portuguese', ${q})
+      WHERE (nicho ILIKE ${searchTerm} OR descricao ILIKE ${searchTerm})
       
       LIMIT 20
     `;

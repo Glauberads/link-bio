@@ -103,7 +103,7 @@ export function GlobalSearchModal({ isOpen, onClose }: { isOpen: boolean, onClos
           {isLoading && (
             <div className="py-10 text-center text-text-muted flex flex-col items-center justify-center gap-2">
                <div className="w-6 h-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-               <span className="text-xs">Buscando no GEDs Brasil...</span>
+               <span className="text-xs">Buscando na G-ADS...</span>
             </div>
           )}
 
@@ -149,7 +149,7 @@ export function GlobalSearchModal({ isOpen, onClose }: { isOpen: boolean, onClos
                  <Search className="w-8 h-8 text-primary" />
                </div>
                <p className="text-text font-medium text-sm">O que você está procurando?</p>
-               <p className="text-xs text-text-muted mt-1 max-w-[250px]">Busque por arquivos, ferramentas de Inteligência Artificial e projetos da base GEDs Brasil.</p>
+               <p className="text-xs text-text-muted mt-1 max-w-[250px]">Busque por arquivos, ferramentas de Inteligência Artificial e projetos da base G-ADS.</p>
             </div>
           )}
         </div>
@@ -159,7 +159,7 @@ export function GlobalSearchModal({ isOpen, onClose }: { isOpen: boolean, onClos
             <span className="bg-surface border border-white/10 px-1.5 py-0.5 rounded font-mono shadow-inner text-text-muted/70">esc</span> para fechar
           </div>
           <div className="flex items-center gap-1 opacity-70">
-            Pesquisa Global <span className="text-primary font-bold">GEDs Brasil</span>
+            Pesquisa Global <span className="text-primary font-bold">G-ADS</span>
           </div>
         </div>
 
