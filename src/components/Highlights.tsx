@@ -18,6 +18,7 @@ export function Highlights({ fixedLinks }: { fixedLinks: any }) {
   const allHighlights = fixedLinks?.highlights || DEFAULT_HIGHLIGHTS;
 
   const highlights = allHighlights.filter((h: any) => {
+     if (h.visible === false) return false;
      if (fixedLinks && fixedLinks[h.id] && fixedLinks[h.id].visible === false) return false;
      return true;
   });

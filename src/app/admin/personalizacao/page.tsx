@@ -576,11 +576,27 @@ export default function PersonalizacaoPage() {
                                 )}
                               </div>
                               <div>
-                                <h5 className="text-sm font-bold text-text group-hover:text-primary transition-colors">{h.label}</h5>
+                                <h5 className="text-sm font-bold text-text group-hover:text-primary transition-colors flex items-center gap-2">
+                                  {h.label}
+                                  {h.visible === false && (
+                                    <span className="px-1.5 py-0.5 rounded text-[8px] bg-red-500/20 text-red-400 font-normal">Oculto</span>
+                                  )}
+                                </h5>
                                 <p className="text-[10px] text-text-muted truncate">Linka para: {h.id || 'Nenhum'}</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-1">
+                              <button 
+                                onClick={() => {
+                                  const newH = [...highlights];
+                                  newH[index].visible = h.visible === false ? true : false;
+                                  setHighlights(newH);
+                                }} 
+                                className={`p-2 bg-surface hover:bg-primary/20 rounded-lg transition-colors border border-primary/20 ${h.visible === false ? 'text-red-400' : 'text-primary'}`}
+                                title={h.visible === false ? 'Mostrar Destaque' : 'Ocultar Destaque'}
+                              >
+                                {h.visible === false ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                              </button>
                               <button onClick={() => setEditingHighlight(index)} className="p-2 bg-surface hover:bg-primary/20 rounded-lg text-text-muted hover:text-primary transition-colors border border-primary/20">
                                 <Pencil className="w-4 h-4" />
                               </button>
