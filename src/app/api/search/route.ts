@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+const FIXED_LINKS = [
+  { id: 'sistemas', slug: 'sistemas', nome: 'Sistemas Prontos', descricao: '9 sistemas prontos para personalizar e revender', type: 'sistemas' },
+  { id: 'projetos', slug: 'projetos', nome: 'Projetos Desenvolvidos', descricao: 'Sistemas, produtos e projetos em evolução', type: 'projetos' },
+  { id: 'github', slug: 'github', nome: 'Repositórios GitHub', descricao: 'Recursos gratuitos organizados por categoria', type: 'biblioteca' },
+  { id: 'dicas', slug: 'dicas', nome: 'Dicas de IA e Automações', descricao: 'Aprenda com conteúdos práticos e links úteis', type: 'biblioteca' },
+];
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q");
@@ -11,7 +18,17 @@ export async function GET(request: Request) {
 
   try {
     const searchTerm = `%${q}%`;
-    const results = await prisma.$queryRaw`
+    const searchTermLower = q.toLowerCase();
+
+    // 1. Static Results (from Home buttons)
+    const staticResults = FIXED_LINKS.filter(link => 
+      link.nome.toLowerCase().includes(searchTermLower) || 
+      link.descricao.toLowerCase().includes(searchTermLower) ||
+      link.id.toLowerCase().includes(searchTermLower)
+    );
+
+    // 2. Database Results
+    const dbResults = await prisma.$queryRaw`
       SELECT id, slug, titulo as nome, descricao, 'biblioteca' as type
       FROM "Resource"
       WHERE (titulo ILIKE ${searchTerm} OR descricao ILIKE ${searchTerm})
@@ -32,7 +49,9 @@ export async function GET(request: Request) {
       LIMIT 20
     `;
 
-    return NextResponse.json({ results });
+    const allResults = [...staticResults, ...(dbResults as any[])];
+
+    return NextResponse.json({ results: allResults.slice(0, 20) });
   } catch (error) {
     console.error("Search Error:", error);
     return NextResponse.json({ error: "Erro na busca" }, { status: 500 });
