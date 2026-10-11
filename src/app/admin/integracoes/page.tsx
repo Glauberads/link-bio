@@ -2,13 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
-import { Activity, Webhook, Bot, Save, Settings, X } from "lucide-react";
+import { Activity, Webhook, Bot, Save, Settings, X, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 export default function IntegracoesPage() {
   const [config, setConfig] = useState<any>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isGeminiModalOpen, setIsGeminiModalOpen] = useState(false);
+  const [testingWebhook, setTestingWebhook] = useState(false);
+  const [webhookTestResult, setWebhookTestResult] = useState<{
+    success: boolean;
+    message: string;
+    status?: number;
+    durationMs?: number;
+  } | null>(null);
 
   useEffect(() => {
     fetch('/api/config')
@@ -33,6 +40,34 @@ export default function IntegracoesPage() {
       alert('Erro ao salvar integrações.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleTestWebhook = async () => {
+    if (!config.webhookUrl?.trim()) {
+      alert("Por favor, informe a URL do webhook antes de testar.");
+      return;
+    }
+
+    setTestingWebhook(true);
+    setWebhookTestResult(null);
+
+    try {
+      const res = await fetch("/api/webhook/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: config.webhookUrl.trim() }),
+      });
+
+      const data = await res.json();
+      setWebhookTestResult(data);
+    } catch (err: any) {
+      setWebhookTestResult({
+        success: false,
+        message: "Falha ao conectar com o servidor para realizar o disparo de teste.",
+      });
+    } finally {
+      setTestingWebhook(false);
     }
   };
 
@@ -85,20 +120,80 @@ export default function IntegracoesPage() {
 
         {/* Webhook */}
         <div className="bg-surface border border-primary/20 rounded-2xl p-6 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-          <div className="flex items-center gap-3 mb-4">
-            <Webhook className="w-5 h-5 text-green-400" />
-            <h3 className="text-xl font-bold text-text">Webhook de Leads</h3>
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <Webhook className="w-5 h-5 text-green-400" />
+              <h3 className="text-xl font-bold text-text">Webhook de Leads</h3>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleTestWebhook}
+              disabled={testingWebhook || !config.webhookUrl}
+              className="flex items-center gap-2 px-4 py-2 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 rounded-xl text-sm font-semibold transition-all disabled:opacity-40 disabled:pointer-events-none hover:shadow-[0_0_15px_rgba(34,197,94,0.25)] active:scale-95 cursor-pointer"
+            >
+              {testingWebhook ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-green-400" />
+                  <span>Testando...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  <span>Testar Webhook</span>
+                </>
+              )}
+            </button>
           </div>
-          <p className="text-sm text-text-muted mb-4">Envie os dados de novos leads automaticamente para plataformas como Make, N8N, Zapier, etc.</p>
-          <div>
-            <label className="text-xs font-medium text-text-muted uppercase tracking-wider block mb-1">URL do Webhook</label>
-            <input 
-              type="url" 
-              value={config.webhookUrl || ''} 
-              onChange={e => setConfig({...config, webhookUrl: e.target.value})} 
-              className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text text-sm outline-none focus:border-primary transition-colors" 
-              placeholder="https://sua-url-de-webhook.com" 
-            />
+
+          <p className="text-sm text-text-muted mb-4">
+            Envie os dados de novos leads automaticamente para plataformas como Make, N8N, Zapier, etc.
+          </p>
+
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs font-medium text-text-muted uppercase tracking-wider block mb-1">
+                URL do Webhook
+              </label>
+              <input 
+                type="url" 
+                value={config.webhookUrl || ''} 
+                onChange={e => {
+                  setConfig({...config, webhookUrl: e.target.value});
+                  if (webhookTestResult) setWebhookTestResult(null);
+                }} 
+                className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text text-sm outline-none focus:border-primary transition-colors" 
+                placeholder="https://aut.glauberads.com.br/webhook/..." 
+              />
+            </div>
+
+            {/* Alerta de Feedback do Teste */}
+            {webhookTestResult && (
+              <div 
+                className={`p-4 rounded-xl border flex items-start gap-3 transition-all animate-in fade-in slide-in-from-top-2 duration-300 ${
+                  webhookTestResult.success 
+                    ? "bg-green-500/10 border-green-500/40 text-green-300 shadow-[0_0_15px_rgba(34,197,94,0.15)]" 
+                    : "bg-red-500/10 border-red-500/40 text-red-300 shadow-[0_0_15px_rgba(239,68,68,0.15)]"
+                }`}
+              >
+                {webhookTestResult.success ? (
+                  <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0 mt-0.5" />
+                ) : (
+                  <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+                )}
+                <div className="text-xs leading-relaxed flex-1">
+                  <div className="font-semibold text-sm mb-0.5">
+                    {webhookTestResult.success ? "Disparo Realizado com Sucesso!" : "Falha no Disparo do Webhook"}
+                  </div>
+                  <p>{webhookTestResult.message}</p>
+                  {webhookTestResult.durationMs !== undefined && (
+                    <span className="inline-block mt-1.5 opacity-75 text-[11px] font-mono">
+                      ⏱ Tempo de resposta: {webhookTestResult.durationMs}ms
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
