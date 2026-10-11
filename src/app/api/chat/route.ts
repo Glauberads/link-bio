@@ -13,9 +13,7 @@ export async function POST(req: Request) {
     }
 
     const genAI = new GoogleGenerativeAI(config.geminiApiKey);
-    const model = genAI.getGenerativeModel({ 
-      model: config.geminiModel || "gemini-3.8-flash",
-    });
+    const chosenModel = config.geminiModel || "gemini-2.5-flash";
 
     const basePrompt = config.agentPrompt?.trim() || "Você é o assistente virtual da empresa FFR do Brasil Technology / Glauber Ads. Seu objetivo é ajudar os visitantes, tirar dúvidas sobre sistemas e qualificar clientes interessados em orçamentos.";
 
@@ -44,7 +42,16 @@ Observações:
     
     promptText += `Usuário: ${message}\nAssistente:`;
 
-    const result = await model.generateContent(promptText);
+    let result;
+    try {
+      const model = genAI.getGenerativeModel({ model: chosenModel });
+      result = await model.generateContent(promptText);
+    } catch (modelErr: any) {
+      console.warn(`Erro com ${chosenModel}, aplicando fallback para gemini-2.5-flash:`, modelErr?.message);
+      const fallbackModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      result = await fallbackModel.generateContent(promptText);
+    }
+
     let responseText = result.response.text();
 
     // Processa captura de lead se a tag estiver presente
