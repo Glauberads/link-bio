@@ -42,19 +42,34 @@ Observações Obrigatórias:
     
     promptText += `Usuário: ${message}\nAssistente:`;
 
-    let result;
-    try {
-      const model = genAI.getGenerativeModel({ model: chosenModel });
-      result = await model.generateContent(promptText);
-    } catch (modelErr: any) {
-      console.warn(`Erro com ${chosenModel}, aplicando fallback para gemini-3.5-flash:`, modelErr?.message);
+    const modelCandidates = Array.from(new Set([
+      chosenModel,
+      "gemini-3.5-flash-lite",
+      "gemini-3.1-flash-lite",
+      "gemini-flash-lite-latest",
+      "gemini-3.5-flash",
+      "gemini-3-flash-preview"
+    ])).filter(Boolean);
+
+    let result: any = null;
+    let lastError: any = null;
+
+    for (const mName of modelCandidates) {
       try {
-        const fallback1 = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
-        result = await fallback1.generateContent(promptText);
-      } catch {
-        const fallback2 = genAI.getGenerativeModel({ model: "gemini-3.7-flash" });
-        result = await fallback2.generateContent(promptText);
+        const model = genAI.getGenerativeModel({ model: mName });
+        const res = await model.generateContent(promptText);
+        if (res?.response) {
+          result = res;
+          break;
+        }
+      } catch (err: any) {
+        lastError = err;
+        console.warn(`[Chat IA] Falha no modelo ${mName} (${err?.status || err?.message?.slice(0, 80)}). Tentando próximo candidato...`);
       }
+    }
+
+    if (!result) {
+      throw lastError || new Error("Nenhum modelo de IA disponível no momento.");
     }
 
     let responseText = result.response.text();
