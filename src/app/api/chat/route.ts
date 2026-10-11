@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     }
 
     const genAI = new GoogleGenerativeAI(config.geminiApiKey);
-    const chosenModel = config.geminiModel || "gemini-2.5-flash";
+    const chosenModel = config.geminiModel || "gemini-3.5-flash";
 
     const basePrompt = config.agentPrompt?.trim() || "Você é o assistente virtual oficial da G-ADS (Glauber Ads). Seu objetivo é ajudar os visitantes, tirar dúvidas sobre sistemas sob medida, tráfego e automações de vendas, e qualificar clientes interessados em orçamentos.";
 
@@ -47,9 +47,14 @@ Observações:
       const model = genAI.getGenerativeModel({ model: chosenModel });
       result = await model.generateContent(promptText);
     } catch (modelErr: any) {
-      console.warn(`Erro com ${chosenModel}, aplicando fallback para gemini-2.5-flash:`, modelErr?.message);
-      const fallbackModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-      result = await fallbackModel.generateContent(promptText);
+      console.warn(`Erro com ${chosenModel}, aplicando fallback para gemini-3.5-flash:`, modelErr?.message);
+      try {
+        const fallback1 = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+        result = await fallback1.generateContent(promptText);
+      } catch {
+        const fallback2 = genAI.getGenerativeModel({ model: "gemini-3.7-flash" });
+        result = await fallback2.generateContent(promptText);
+      }
     }
 
     let responseText = result.response.text();
