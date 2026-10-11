@@ -76,21 +76,19 @@ Observações Obrigatórias:
             ? leadData.email.trim() 
             : fallbackEmail;
 
-          // Verificação anti-duplicação: verifica se já existe lead criado recentemente (últimos 30 minutos)
+          // Verificação anti-duplicação: bloqueia apenas duplicidade idêntica da mesma conversa (mesmo nome e telefone nos últimos 60 segundos)
           const recentLead = await prisma.lead.findFirst({
             where: {
-              OR: [
-                ...(cleanPhone.length >= 8 ? [{ telefone: { contains: cleanPhone.slice(-8) } }] : []),
-                ...(email ? [{ email }] : [])
-              ],
+              nome: { equals: leadData.nome.trim(), mode: 'insensitive' },
+              ...(cleanPhone.length >= 8 ? { telefone: { contains: cleanPhone.slice(-8) } } : {}),
               createdAt: {
-                gte: new Date(Date.now() - 30 * 60 * 1000) // últimos 30 min
+                gte: new Date(Date.now() - 60 * 1000) // apenas 60 segundos
               }
             }
           });
 
           if (recentLead) {
-            console.log(`[Chat IA] Lead ${leadData.nome} (${cleanPhone || email}) já capturado recentemente. Evitando duplicação.`);
+            console.log(`[Chat IA] Mensagem subsequente do mesmo lead ${leadData.nome}. Evitando duplicidade de registro.`);
           } else {
             // Salva no banco de dados
             const newLead = await prisma.lead.create({

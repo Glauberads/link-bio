@@ -51,21 +51,22 @@ export async function POST(request: Request) {
 
     const cleanPhone = (validatedData.telefone || "").replace(/\D/g, "");
 
-    // Anti-duplicação: previne cliques duplos ou reenvios imediatos nos últimos 15 minutos
+    // Anti-duplicação: previne cliques duplos rápidos no botão enviar (mesmo nome nos últimos 30 segundos)
     const recentExistingLead = await prisma.lead.findFirst({
       where: {
+        nome: { equals: validatedData.nome.trim(), mode: 'insensitive' },
         OR: [
           { email: validatedData.email },
           ...(cleanPhone.length >= 8 ? [{ telefone: { contains: cleanPhone.slice(-8) } }] : [])
         ],
         createdAt: {
-          gte: new Date(Date.now() - 15 * 60 * 1000) // 15 minutos
+          gte: new Date(Date.now() - 30 * 1000) // 30 segundos
         }
       }
     });
 
     if (recentExistingLead) {
-      console.log(`[Formulário Lead] Lead ${validatedData.nome} (${validatedData.email}) já recebido nos últimos 15 min. Ignorando duplicação.`);
+      console.log(`[Formulário Lead] Clique duplo detectado para ${validatedData.nome}. Ignorando duplicação.`);
       return NextResponse.json({ success: true, leadId: recentExistingLead.id, deduplicated: true }, { status: 200 });
     }
 
