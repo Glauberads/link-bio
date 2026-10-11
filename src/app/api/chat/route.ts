@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const genAI = new GoogleGenerativeAI(config.geminiApiKey);
     const chosenModel = config.geminiModel || "gemini-2.5-flash";
 
-    const basePrompt = config.agentPrompt?.trim() || "Você é o assistente virtual da empresa FFR do Brasil Technology / Glauber Ads. Seu objetivo é ajudar os visitantes, tirar dúvidas sobre sistemas e qualificar clientes interessados em orçamentos.";
+    const basePrompt = config.agentPrompt?.trim() || "Você é o assistente virtual oficial da G-ADS (Glauber Ads). Seu objetivo é ajudar os visitantes, tirar dúvidas sobre sistemas sob medida, tráfego e automações de vendas, e qualificar clientes interessados em orçamentos.";
 
     let promptText = `${basePrompt}
 
