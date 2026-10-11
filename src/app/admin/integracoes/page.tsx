@@ -230,7 +230,7 @@ export default function IntegracoesPage() {
               value={config.agentPrompt || ''} 
               onChange={e => setConfig({...config, agentPrompt: e.target.value})} 
               className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text text-sm outline-none focus:border-primary transition-colors h-40 resize-none font-mono" 
-              placeholder="Ex: Você é um assistente virtual da empresa FFR. Seu objetivo é ajudar os usuários a encontrarem os melhores sistemas e serviços..." 
+              placeholder="Ex: Você é um assistente virtual da empresa G-ADS. Seu objetivo é ajudar os usuários a encontrarem os melhores sistemas e serviços..." 
             />
           </div>
         </div>

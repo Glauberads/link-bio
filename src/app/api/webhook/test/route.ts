@@ -27,7 +27,7 @@ export async function POST(req: Request) {
         nome: "Lead Teste Conecta",
         email: "teste.conecta@glauberads.com.br",
         telefone: "5511999999999",
-        empresa: "Empresa Demonstração FFR",
+        empresa: "Empresa Demonstração G-ADS",
         interesse: "Desenvolvimento de Sistemas & Automação com IA",
         mensagem: "Olá! Gostaria de um orçamento para desenvolver um sistema sob medida e automatizar nosso fluxo de vendas.",
         origem: "Teste de Integração (Painel Admin)",
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "User-Agent": "Conecta-FFR-Webhook-Tester/1.0",
+          "User-Agent": "Conecta-GADS-Webhook-Tester/1.0",
         },
         body: JSON.stringify(testPayload),
         signal: controller.signal,

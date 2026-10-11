@@ -59,7 +59,7 @@ export default function PersonalizacaoPage() {
     { id: 'whatsapp', defaultTitle: 'Falar comigo no WhatsApp', defaultSubtitle: 'Converse diretamente comigo', urlField: 'whatsappUrl' },
     { id: 'youtube', defaultTitle: 'YouTube', defaultSubtitle: 'Acompanhe vídeos exclusivos', urlField: 'youtubeUrl' },
     { id: 'orcamento', defaultTitle: 'Orçamento para sistemas', defaultSubtitle: 'Sites e soluções sob medida', urlField: 'orcamentoUrl' },
-    { id: 'siteOficial', defaultTitle: 'Conhecer a FFR do Brasil', defaultSubtitle: 'Acesse nosso site oficial', urlField: 'siteOficialUrl' },
+    { id: 'siteOficial', defaultTitle: 'Conhecer a G-ADS', defaultSubtitle: 'Acesse nosso site oficial', urlField: 'siteOficialUrl' },
     { id: 'sistemas', defaultTitle: '9 sistemas prontos', defaultSubtitle: 'Só R$ 19,90 • 7 dias de garantia', urlField: 'sistemasUrl' },
     { id: 'siteGenClone', defaultTitle: 'SiteGenClone', defaultSubtitle: 'Clonador de sites', urlField: 'siteGenUrl' },
     { id: 'github', defaultTitle: 'Repositórios GitHub', defaultSubtitle: 'Recursos gratuitos', urlField: 'githubUrl' },
@@ -201,7 +201,7 @@ export default function PersonalizacaoPage() {
             <div className="space-y-4">
               <div>
                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider">Subtítulo (Verde)</label>
-                <input type="text" value={config.siteTitle || ''} onChange={e => setConfig({...config, siteTitle: e.target.value})} className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text mt-1 text-sm outline-none focus:border-primary transition-colors" placeholder="FFR DO BRASIL TECHNOLOGY" />
+                <input type="text" value={config.siteTitle || ''} onChange={e => setConfig({...config, siteTitle: e.target.value})} className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text mt-1 text-sm outline-none focus:border-primary transition-colors" placeholder="G-ADS TECNOLOGIA" />
               </div>
               <div>
                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider">Nome Principal (Branco)</label>
@@ -219,7 +219,7 @@ export default function PersonalizacaoPage() {
             <div className="space-y-4">
               <div>
                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider">Título da Busca</label>
-                <input type="text" value={config.fixedLinksConfig?.searchBox?.title || ''} onChange={e => updateFixedLink('searchBox', 'title', e.target.value)} className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text mt-1 text-sm outline-none focus:border-primary transition-colors" placeholder="Pesquise no Conecta FFR" />
+                <input type="text" value={config.fixedLinksConfig?.searchBox?.title || ''} onChange={e => updateFixedLink('searchBox', 'title', e.target.value)} className="w-full bg-background border border-primary/30 rounded-xl px-4 py-3 text-text mt-1 text-sm outline-none focus:border-primary transition-colors" placeholder="Pesquise no Conecta G-ADS" />
               </div>
               <div>
                 <label className="text-xs font-medium text-text-muted uppercase tracking-wider">Subtítulo</label>

@@ -20,19 +20,19 @@ export async function generateMetadata(): Promise<Metadata> {
   try { config = await prisma.siteConfig.findFirst({ where: { id: 1 } }); } catch {}
   
   return {
-    title: config?.seoTitle || "FFR Conecta | G-ADS",
+    title: config?.seoTitle || "Conecta | G-ADS",
     description: config?.seoDescription || "Tecnologia, marketing e automação para escalar negócios.",
     icons: {
       icon: config?.faviconUrl || "/favicon.ico",
     },
     openGraph: {
-      title: config?.seoTitle || "FFR Conecta | G-ADS",
+      title: config?.seoTitle || "Conecta | G-ADS",
       description: config?.seoDescription || "Tecnologia, marketing e automação para escalar negócios.",
       images: config?.seoImageUrl ? [config.seoImageUrl] : [],
     },
     twitter: {
       card: "summary_large_image",
-      title: config?.seoTitle || "FFR Conecta | G-ADS",
+      title: config?.seoTitle || "Conecta | G-ADS",
       description: config?.seoDescription || "Tecnologia, marketing e automação para escalar negócios.",
       images: config?.seoImageUrl ? [config.seoImageUrl] : [],
     }

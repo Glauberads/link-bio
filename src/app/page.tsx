@@ -31,12 +31,12 @@ export default async function Home() {
             {config?.logoUrl ? (
                <img src={config.logoUrl} alt="Logo" className="w-full h-full object-cover" />
             ) : (
-               <span className="font-title font-bold text-primary text-xl">FFR</span>
+               <span className="font-title font-bold text-primary text-xl">G-ADS</span>
             )}
           </div>
           <div>
             <h2 className="text-[10px] font-bold text-[#00A859] tracking-widest uppercase mb-1 drop-shadow-[0_0_8px_rgba(0,168,89,0.5)]">
-              {config?.siteTitle || "FFR DO BRASIL TECHNOLOGY"}
+              {config?.siteTitle || "G-ADS TECNOLOGIA"}
             </h2>
             <h1 className="text-3xl font-bold text-text leading-none mb-2">
               {config?.siteSubtitle || "Flávio Rodrigues"}

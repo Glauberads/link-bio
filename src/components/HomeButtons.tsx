@@ -146,7 +146,7 @@ export function HomeButtons({ config, fixedLinks }: { config: any; fixedLinks: a
       wrapperClassName: "bg-surface border-y border-r border-primary/20 border-l-4 border-l-[#00A859] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform hover:bg-surface/80 group",
       iconWrapperClassName: "bg-[#00A859]/10 p-2 rounded-xl group-hover:bg-[#00A859]/20 transition-colors", icon: Globe, iconClassName: "w-5 h-5 text-[#00A859]",
       titleClassName: "font-bold text-text text-sm", subtitleClassName: "text-[10px] text-text-muted",
-      defaultTitle: "Conhecer a FFR do Brasil", defaultSubtitle: "Acesse nosso site oficial"
+      defaultTitle: "Conhecer a G-ADS", defaultSubtitle: "Acesse nosso site oficial"
     },
     sistemas: {
       href: config?.sistemasUrl || "/sistemas", isExternal: false, onClick: () => handleTrack("ViewContent", "Sistemas", config?.sistemasUrl || "/sistemas"),
@@ -215,7 +215,7 @@ export function HomeButtons({ config, fixedLinks }: { config: any; fixedLinks: a
           <Search className="w-5 h-5 text-[#00e676]" />
         </div>
         <div className="ml-4 flex-1 pr-2">
-          <h3 className="font-bold text-text text-sm">{fixedLinks.searchBox?.title || "Pesquise no Conecta FFR"}</h3>
+          <h3 className="font-bold text-text text-sm">{fixedLinks.searchBox?.title || "Pesquise no Conecta G-ADS"}</h3>
           <p className="text-[10px] text-text-muted mt-0.5">{fixedLinks.searchBox?.subtitle || "Encontre materiais, repositórios, sistemas, projetos e links."}</p>
           <div className="block w-full">
             <input
