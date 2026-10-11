@@ -69,7 +69,7 @@ export default function SistemasPage() {
              </div>
            </div>
 
-           <Link href="https://www.asaas.com/c/seu-link-aqui">
+           <Link href="/orcamento">
              <Button size="lg" className="w-full sm:w-auto text-lg font-bold px-12 shadow-[0_0_30px_rgba(245,138,31,0.6)] hover:scale-105 transition-transform">
                Quero meu Pacote Agora
              </Button>

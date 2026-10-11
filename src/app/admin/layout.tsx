@@ -1,7 +1,7 @@
 "use client";
 import { ReactNode, useState } from "react";
 import Link from "next/link";
-import { LayoutDashboard, Users, CreditCard, FolderArchive, LogOut, Palette, Plug, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, FolderArchive, LogOut, Palette, Plug, Menu, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -38,9 +38,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </Link>
           <Link href="/admin/leads" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-text-muted hover:text-primary hover:bg-primary/10 rounded-xl transition-all font-medium">
             <Users className="w-5 h-5 text-blue-400" /> Leads & Waitlist
-          </Link>
-          <Link href="/admin/vendas" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-text-muted hover:text-primary hover:bg-primary/10 rounded-xl transition-all font-medium">
-            <CreditCard className="w-5 h-5 text-green-400" /> Vendas (Asaas)
           </Link>
           <Link href="/admin/conteudo" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-text-muted hover:text-primary hover:bg-primary/10 rounded-xl transition-all font-medium">
             <FolderArchive className="w-5 h-5 text-purple-400" /> Biblioteca

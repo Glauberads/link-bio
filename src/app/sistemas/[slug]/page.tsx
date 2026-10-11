@@ -32,9 +32,9 @@ export default function SistemaNichoPage({ params }: { params: Promise<{ slug: s
                Solução completa e personalizável para o nicho de {nichoName}. Receba o código fonte, instale e revenda para seus clientes hoje mesmo.
              </p>
              
-             <Link href="https://www.asaas.com/c/seu-link-aqui">
+             <Link href="/orcamento">
                <Button size="lg" className="text-lg font-bold px-12 shadow-[0_0_30px_rgba(245,138,31,0.5)] hover:scale-105 transition-transform">
-                 Comprar Pacote Completo (R$ 19,90)
+                 Solicitar Pacote Completo
                </Button>
              </Link>
           </div>
