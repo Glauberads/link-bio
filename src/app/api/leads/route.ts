@@ -110,3 +110,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    const all = searchParams.get("all");
+
+    if (all === "true") {
+      await prisma.lead.deleteMany({});
+      return NextResponse.json({ success: true, message: "Todos os leads foram excluídos com sucesso." });
+    }
+
+    if (id) {
+      await prisma.lead.delete({ where: { id } });
+      return NextResponse.json({ success: true, message: "Lead excluído com sucesso." });
+    }
+
+    return NextResponse.json({ error: "Parâmetro id ou all=true é obrigatório." }, { status: 400 });
+  } catch (error: any) {
+    console.error("Erro ao excluir lead:", error);
+    return NextResponse.json({ error: error?.message || "Erro interno do servidor" }, { status: 500 });
+  }
+}
