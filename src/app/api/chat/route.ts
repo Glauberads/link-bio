@@ -105,7 +105,9 @@ Observações:
     return NextResponse.json({ reply: responseText });
   } catch (error: any) {
     console.error('Erro na API de chat:', error?.message || error);
-    return NextResponse.json({ error: 'Erro ao processar mensagem no servidor.' }, { status: 500 });
+    return NextResponse.json({ 
+      error: error?.message || 'Erro ao processar mensagem no servidor.'
+    }, { status: 500 });
   }
 }
 
