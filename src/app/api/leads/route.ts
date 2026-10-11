@@ -68,11 +68,15 @@ export async function POST(request: Request) {
     // Trigger Webhook if configured
     const config = await prisma.siteConfig.findUnique({ where: { id: 1 } });
     if (config?.webhookUrl) {
-      fetch(config.webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ event: 'new_lead', data: lead })
-      }).catch(err => console.error('Erro ao disparar webhook de lead:', err));
+      try {
+        await fetch(config.webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ event: 'new_lead', data: lead })
+        });
+      } catch (err) {
+        console.error('Erro ao disparar webhook de lead:', err);
+      }
     }
 
     return NextResponse.json({ success: true, leadId: lead.id }, { status: 201 });

@@ -50,11 +50,15 @@ export async function POST(request: Request) {
     // Trigger Webhook if configured
     const config = await prisma.siteConfig.findUnique({ where: { id: 1 } });
     if (config?.webhookUrl) {
-      fetch(config.webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ event: 'new_waitlist', data: entry })
-      }).catch(err => console.error('Erro ao disparar webhook de waitlist:', err));
+      try {
+        await fetch(config.webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ event: 'new_waitlist', data: entry })
+        });
+      } catch (err) {
+        console.error('Erro ao disparar webhook de waitlist:', err);
+      }
     }
 
     return NextResponse.json({ success: true, entryId: entry.id }, { status: 201 });

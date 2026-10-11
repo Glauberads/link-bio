@@ -79,11 +79,15 @@ Observações:
 
           // Dispara Webhook para n8n
           if (config.webhookUrl) {
-            fetch(config.webhookUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ event: 'new_lead', data: newLead })
-            }).catch(err => console.error('Erro ao disparar webhook de lead do chat:', err));
+            try {
+              await fetch(config.webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ event: 'new_lead', data: newLead })
+              });
+            } catch (err) {
+              console.error('Erro ao disparar webhook de lead do chat:', err);
+            }
           }
         }
       } catch (err) {
