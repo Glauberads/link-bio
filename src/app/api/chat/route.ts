@@ -20,13 +20,13 @@ export async function POST(req: Request) {
     let promptText = `${basePrompt}
 
 REGRA CRÍTICA DE CAPTURA DE LEADS:
-Quando você estiver conversando com o visitante e ele fornecer informações de contato (pelo menos Nome e WhatsApp/Telefone, e a necessidade ou tipo de serviço), você DEVE:
+Quando você estiver conversando com o visitante e ele fornecer informações de contato pela primeira vez (pelo menos Nome e WhatsApp/Telefone, e a necessidade ou tipo de serviço), você DEVE:
 1. Confirmar o recebimento de forma educada e prestativa, dizendo que a equipe comercial entrará em contato em breve pelo WhatsApp.
 2. No FINAL ABSOLUTO da sua resposta, adicionar uma tag de dados no formato exato:
 <!--LEAD_CAPTURE:{"nome":"Nome do Lead","telefone":"WhatsApp ou Telefone","email":"Email se houver","interesse":"Tipo de Serviço/Sistema","mensagem":"Resumo do pedido do cliente"}-->
 
-Observações:
-- Só anexe a tag <!--LEAD_CAPTURE:...--> quando tiver coletado o Nome e o WhatsApp/Telefone.
+Observações Obrigatórias:
+- SÓ anexe a tag <!--LEAD_CAPTURE:...--> UMA ÚNICA VEZ por atendimento. Se o usuário já informou o contato no histórico e você já confirmou, NUNCA repita a tag nas mensagens seguintes.
 - Se o usuário não tiver informado email, envie o campo "email" vazio ("").
 - Mantenha a resposta visível para o usuário amigável, humanizada e profissional.
 
@@ -76,29 +76,46 @@ Observações:
             ? leadData.email.trim() 
             : fallbackEmail;
 
-          // Salva no banco de dados
-          const newLead = await prisma.lead.create({
-            data: {
-              nome: leadData.nome.trim(),
-              email: email,
-              telefone: leadData.telefone?.trim() || null,
-              interesse: leadData.interesse?.trim() || "Orçamento via Chat Flutuante",
-              mensagem: leadData.mensagem?.trim() || "Atendimento realizado pelo Agente de IA Flutuante",
-              origem: "Chat Flutuante (IA)",
-              status: "novo",
+          // Verificação anti-duplicação: verifica se já existe lead criado recentemente (últimos 30 minutos)
+          const recentLead = await prisma.lead.findFirst({
+            where: {
+              OR: [
+                ...(cleanPhone.length >= 8 ? [{ telefone: { contains: cleanPhone.slice(-8) } }] : []),
+                ...(email ? [{ email }] : [])
+              ],
+              createdAt: {
+                gte: new Date(Date.now() - 30 * 60 * 1000) // últimos 30 min
+              }
             }
           });
 
-          // Dispara Webhook para n8n
-          if (config.webhookUrl) {
-            try {
-              await fetch(config.webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ event: 'new_lead', data: newLead })
-              });
-            } catch (err) {
-              console.error('Erro ao disparar webhook de lead do chat:', err);
+          if (recentLead) {
+            console.log(`[Chat IA] Lead ${leadData.nome} (${cleanPhone || email}) já capturado recentemente. Evitando duplicação.`);
+          } else {
+            // Salva no banco de dados
+            const newLead = await prisma.lead.create({
+              data: {
+                nome: leadData.nome.trim(),
+                email: email,
+                telefone: leadData.telefone?.trim() || null,
+                interesse: leadData.interesse?.trim() || "Orçamento via Chat Flutuante",
+                mensagem: leadData.mensagem?.trim() || "Atendimento realizado pelo Agente de IA Flutuante",
+                origem: "Chat Flutuante (IA)",
+                status: "novo",
+              }
+            });
+
+            // Dispara Webhook para n8n
+            if (config.webhookUrl) {
+              try {
+                await fetch(config.webhookUrl, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ event: 'new_lead', data: newLead })
+                });
+              } catch (err) {
+                console.error('Erro ao disparar webhook de lead do chat:', err);
+              }
             }
           }
         }

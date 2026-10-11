@@ -25,8 +25,11 @@ export function FloatingChat() {
     scrollToBottom();
   }, [messages, isOpen]);
 
+  const isSendingRef = useRef(false);
+
   const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || isSendingRef.current) return;
+    isSendingRef.current = true;
 
     const userText = input.trim();
     setInput("");
@@ -59,6 +62,7 @@ export function FloatingChat() {
       setMessages(prev => [...prev, { role: "model", text: "Erro ao se conectar ao servidor." }]);
     } finally {
       setIsLoading(false);
+      isSendingRef.current = false;
     }
   };
 
